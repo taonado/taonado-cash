@@ -2,7 +2,6 @@
 
 # [🌪️ TAONADO.CASH](https://taonado.cash)
 
-
 </div>
 
 # A Privacy Preserving TAO Mixer on Bittensor
@@ -47,7 +46,7 @@ cd taonado-cash && npm install
 taonado deposit --amount 1 --secret <your_secret_phrase> --wallet_name <coldkey_address>
 ```
 
-### 🚨 Important: You must keep this secret phrase secure. There is no way to widthraw funds without it.
+### 🚨 Important: You must keep this secret phrase secure. There is no way to withdraw funds without it.
 
 2. Withdraw TAO:
 ```bash

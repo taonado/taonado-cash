@@ -1,1 +1,22 @@
 .DS_Store
+node_modules
+.env
+
+# Hardhat files and other artifacts
+/cache
+/artifacts
+deployed-contract.json
+
+# TypeChain files
+/typechain
+/typechain-types
+
+# solidity-coverage files
+/coverage
+/coverage.json
+
+# Hardhat Ignition default folder for deployments against a local node
+ignition/deployments/chain-31337
+
+# secrets and other local configs
+config.ts
