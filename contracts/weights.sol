@@ -10,18 +10,16 @@ contract WeightsV1 {
     IWTAO public wtao;
     IMetagraph public metagraph;
     IDepositTracker public depositTracker;
+    uint256 public depositGoal;
+
+    // *should* be 0 as this sn is registered after dTAO
+    uint16 public burn_uid;
 
     uint16 public netuid;
-
-    constructor(
-        uint16 _netuid,
-        address _depositTracker,
-        address _wtao,
-        address _metagraph
-    ) {
+    constructor(uint16 _netuid, address _depositTracker, address _wtao) {
         netuid = _netuid;
         wtao = IWTAO(_wtao);
-        metagraph = IMetagraph(_metagraph);
+        metagraph = IMetagraph(IMetagraph_ADDRESS);
         depositTracker = IDepositTracker(_depositTracker);
     }
 
@@ -39,7 +37,7 @@ contract WeightsV1 {
         dests = new uint16[](uidCount);
         weights = new uint256[](uidCount);
 
-        for (uint16 uid = 0; uid < uidCount; uid++) {
+        for (uint16 uid = 1; uid < uidCount; uid++) {
             dests[uid] = uid;
             bytes32 hotkey = metagraph.getHotkey(netuid, uid);
             for (
@@ -51,6 +49,33 @@ contract WeightsV1 {
                 weights[uid] += wtao.balanceOf(depositer);
             }
         }
+
+        // if the total supply is less than the deposit goal, burn excess miner emissions
+        if (wtao.totalSupply() < depositGoal) {
+            weights[burn_uid] = depositGoal - wtao.totalSupply();
+        }
+    }
+
+    function getNormalizedWeights()
+        public
+        view
+        returns (uint16[] memory dests, uint16[] memory weights)
+    {
+        uint256[] memory unnormalizedWeights;
+        (dests, unnormalizedWeights) = getWeights();
+        weights = new uint16[](unnormalizedWeights.length);
+
+        for (uint16 i = 0; i < weights.length; i++) {
+            weights[i] = uint16(
+                (unnormalizedWeights[i] * type(uint16).max) / wtao.totalSupply()
+            );
+        }
+
+        return (dests, weights);
+    }
+
+    function setDepositGoal(uint256 _depositGoal) public {
+        depositGoal = _depositGoal;
     }
 
     function getNetuid() public view returns (uint16) {

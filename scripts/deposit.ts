@@ -31,7 +31,7 @@ async function main() {
   const symbol = await contract.symbol();
   console.log("Token symbol:", symbol);
 
-  // Deposit 1 ETH to the contract
+  // Deposit 1 TAO to the contract
   const amountToDeposit = ethers.parseEther("1.0");
   console.log(`Depositing ${ethers.formatEther(amountToDeposit)} TAO...`);
 
