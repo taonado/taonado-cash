@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GNU GPLv3
+// SPDX-License-Identifier: GPL-3.0
 
 pragma solidity ^0.8.24;
 
@@ -16,10 +16,15 @@ contract WeightsV1 {
     uint16 public burn_uid;
 
     uint16 public netuid;
-    constructor(uint16 _netuid, address _depositTracker, address _wtao) {
+    constructor(
+        uint16 _netuid,
+        address _depositTracker,
+        address _metagraph,
+        address _wtao
+    ) {
         netuid = _netuid;
         wtao = IWTAO(_wtao);
-        metagraph = IMetagraph(IMetagraph_ADDRESS);
+        metagraph = IMetagraph(_metagraph);
         depositTracker = IDepositTracker(_depositTracker);
     }
 
@@ -65,9 +70,17 @@ contract WeightsV1 {
         (dests, unnormalizedWeights) = getWeights();
         weights = new uint16[](unnormalizedWeights.length);
 
+        uint256 currentSupply = wtao.totalSupply();
+        uint256 denominator;
+        if (currentSupply < depositGoal) {
+            denominator = depositGoal;
+        } else {
+            denominator = currentSupply;
+        }
+
         for (uint16 i = 0; i < weights.length; i++) {
             weights[i] = uint16(
-                (unnormalizedWeights[i] * type(uint16).max) / wtao.totalSupply()
+                (((unnormalizedWeights[i]) * type(uint16).max) / denominator)
             );
         }
 

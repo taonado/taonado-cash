@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GNU GPLv3
+// SPDX-License-Identifier: GPL-3.0
 
 // Phase 0 deposit tracker contract.
 // This contract is used to associate deposits made by miners back to their hotkeys.
