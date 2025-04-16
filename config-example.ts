@@ -1,6 +1,10 @@
 // PROTECT YOUR PRIVATE KEYS WELL, NEVER COMMIT THEM TO GITHUB OR SHARE WITH ANYONE
-const ethPrivateKey: string = "0000000000000000000000000000000000000000000000000000000000000001";
+const ethPrivateKey: string =
+  "0000000000000000000000000000000000000000000000000000000000000001";
+
+const env: string = "local";
 
 export const config = {
-    ethPrivateKey,
-}
+  ethPrivateKey,
+  env,
+};
