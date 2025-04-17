@@ -110,6 +110,13 @@ describe("Weights", function () {
       await wtao.connect(addr1).withdraw(ethers.parseEther("550"));
       normalizedWeights = await weights.getNormalizedWeights();
       expect(normalizedWeights[1]).to.deep.equal([65535n, 0n, 0n]);
+
+      // exceed deposit goal by x10
+      await wtao.connect(addr1).deposit({ value: ethers.parseEther("9000") });
+      await wtao.connect(addr2).deposit({ value: ethers.parseEther("1000") });
+
+      normalizedWeights = await weights.getNormalizedWeights();
+      expect(normalizedWeights[1]).to.deep.equal([0n, 58981n, 6553n]);
     });
   });
 });

@@ -2,11 +2,12 @@
 
 pragma solidity ^0.8.24;
 
+import "@openzeppelin/contracts/access/Ownable.sol";
 import "./IWTAO.sol";
 import "./deposit.sol";
 import "./metagraph.sol";
 
-contract WeightsV1 {
+contract WeightsV1 is Ownable {
     IWTAO public wtao;
     IMetagraph public metagraph;
     IDepositTracker public depositTracker;
@@ -21,7 +22,7 @@ contract WeightsV1 {
         address _depositTracker,
         address _metagraph,
         address _wtao
-    ) {
+    ) Ownable(msg.sender) {
         netuid = _netuid;
         wtao = IWTAO(_wtao);
         metagraph = IMetagraph(_metagraph);
@@ -87,7 +88,7 @@ contract WeightsV1 {
         return (dests, weights);
     }
 
-    function setDepositGoal(uint256 _depositGoal) public {
+    function setDepositGoal(uint256 _depositGoal) public onlyOwner {
         depositGoal = _depositGoal;
     }
 
