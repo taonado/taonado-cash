@@ -40,7 +40,14 @@ git clone https://github.com/taonado/taonado-cash
 cd taonado-cash && npm install
 ```
 
-### Usage
+### Miners
+Carefully read the instructions and script in [scripts/miner.ts](scripts/miner.ts)
+Once setup:
+```bash
+yarn run deposit-local
+```
+
+### Usage (coming soon!)
 1. Deposit TAO:
 ```bash
 taonado deposit --amount 1 --secret <your_secret_phrase> --wallet_name <coldkey_address>
@@ -157,6 +164,10 @@ The only thing we do know:
 - 🛡️ Reduces Sybil Attacks: Makes it harder to correlate miner identities across subnets.
 - 🌱 Encourages Experimentation: Miners can freely test subnets without reputation risks.
 - 🔄 Capital Fluidity: Privately move TAO between subnets to optimize incentives.
+
+## FAQs
+- Can I mine as a validator? Sure, why not.
+- Do miners need to run anything? Nope, all activities take place within the EVM
 
 ## 📜 License
 Taonado is MIT licensed. See [LICENSE](LICENSE)
