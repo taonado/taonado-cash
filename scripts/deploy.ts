@@ -1,14 +1,18 @@
 import { ethers } from "hardhat";
 import { storeContract, contractExists, getDeployedContract } from "./store";
-import { WTAO__factory, DepositTracker__factory } from "../typechain-types";
+import {
+  WTAO__factory,
+  DepositTracker__factory,
+  MockMetagraph__factory,
+  WeightsV1__factory,
+} from "../typechain-types";
 import { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signers";
-
-enum Contracts {
-  WTAO = "WTAO",
-  DEPOSIT_TRACKER = "DepositTracker",
-}
-
+import { AddressLike, BigNumberish } from "ethers";
+import { Contracts } from "./contracts";
+import { config } from "../config";
 let deployer: HardhatEthersSigner | undefined;
+let IMetagraph_ADDRESS: AddressLike =
+  "0x0000000000000000000000000000000000000802";
 
 async function main() {
   try {
@@ -29,6 +33,14 @@ async function main() {
 
     const wtao = await deployWTAO();
     const depositTracker = await deployDepositTracker();
+    const weights = await deployWeights(
+      config.netuid,
+      depositTracker.target,
+      wtao.target
+    );
+
+    // set initial deposit goal to 1000 TAO
+    await weights.setDepositGoal(ethers.parseEther("1000"));
 
     console.log("------ ENV VARS ------");
     console.log(`PUBLIC_WTAO_ADDRESS=${wtao.target}`);
@@ -80,6 +92,40 @@ async function deployDepositTracker() {
   console.log(`DepositTracker deployed to ${tracker.target}`);
 
   await storeContract<typeof tracker>(Contracts.DEPOSIT_TRACKER, tracker);
+  return tracker;
+}
+
+async function deployWeights(
+  netuid: BigNumberish,
+  _depositTracker: AddressLike,
+  _wtao: AddressLike
+) {
+  if (await contractExists(Contracts.WEIGHTS)) {
+    console.log("Weights contract already exists");
+    const weights = await getDeployedContract<typeof weightsv1>(
+      Contracts.WEIGHTS
+    );
+    const contract = WeightsV1__factory.connect(
+      weights.target.toString(),
+      deployer
+    );
+    return contract;
+  }
+
+  console.log("Deploying Weights contract...");
+  const factory = await ethers.getContractFactory(Contracts.WEIGHTS);
+  const weightsv1 = await factory.deploy(
+    netuid,
+    _depositTracker,
+    IMetagraph_ADDRESS,
+    _wtao
+  );
+
+  await weightsv1.waitForDeployment();
+  console.log(`Weights deployed to ${weightsv1.target}`);
+
+  await storeContract<typeof weightsv1>(Contracts.WEIGHTS, weightsv1);
+  return weightsv1;
 }
 
 main().catch((error) => {

@@ -1,27 +1,28 @@
 import { ethers } from "hardhat";
-import fs from "fs";
+import { Contracts } from "./contracts";
 import { config } from "../config";
-import { WTAO__factory } from "../typechain-types";
+import { WTAO__factory, WTAO } from "../typechain-types";
+import { getDeployedContract, contractExists } from "./store";
 
 async function main() {
   // Get deployed address
-  let deployedInfo;
-  try {
-    deployedInfo = fs.readFileSync("./deployed-contract.json").toString();
-  } catch (e) {
-    console.log(
-      "ERROR: Can't read the deployed contract info. The contract needs to be deployed first."
-    );
+  if (!(await contractExists(Contracts.WTAO))) {
+    console.log("WTAO contract not found, please check env");
     return;
   }
-  const { address, abi } = JSON.parse(deployedInfo);
+  let instance = await getDeployedContract(Contracts.WTAO);
+  if (!instance) {
+    console.log("WTAO contract not found");
+    return;
+  }
+  const address = instance.target;
   console.log(`WTAO address: ${address}`);
 
   // Get the wallet with provider
   const wallet = new ethers.Wallet(config.ethPrivateKey, ethers.provider);
 
   // Create contract instance with proper typing
-  const contract = WTAO__factory.connect(address, wallet);
+  const contract = WTAO__factory.connect(address.toString(), wallet);
 
   // Get token name
   const name = await contract.name();
