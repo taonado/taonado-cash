@@ -1,20 +1,15 @@
 import { ethers } from "hardhat";
-import { Contracts } from "./contracts";
+import { Contracts, getWTAOContract } from "./contracts";
 import { config } from "../config";
-import { WTAO__factory, WTAO } from "../typechain-types";
-import { getDeployedContract, contractExists } from "./store";
+import { WTAO__factory } from "../typechain-types";
 
 async function main() {
-  // Get deployed address
-  if (!(await contractExists(Contracts.WTAO))) {
+  let instance = await getWTAOContract();
+  if (!instance) {
     console.log("WTAO contract not found, please check env");
     return;
   }
-  let instance = await getDeployedContract(Contracts.WTAO);
-  if (!instance) {
-    console.log("WTAO contract not found");
-    return;
-  }
+
   const address = instance.target;
   console.log(`WTAO address: ${address}`);
 
