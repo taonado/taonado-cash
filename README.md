@@ -38,7 +38,9 @@
 ### Installation
 ```bash
 git clone https://github.com/taonado/taonado-cash
-cd taonado-cash && npm install
+cd taonado-cash && yarn
+cp config-example.ts config.ts #fill in with details
+yarn run build
 ```
 
 ### Miners
@@ -46,6 +48,13 @@ Carefully read the instructions and script in [scripts/miner.ts](scripts/miner.t
 Once setup:
 ```bash
 yarn run deposit-local
+```
+
+### Validators
+Carefully read the instructions and script in [scripts/vali.ts](scripts/vali.ts)
+Once setup:
+```bash
+yarn run vali-local
 ```
 
 ### Usage (coming soon!)
