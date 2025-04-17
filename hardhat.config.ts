@@ -7,6 +7,7 @@ const hardhatConfig: HardhatUserConfig = {
   solidity: "0.8.24",
   defaultNetwork: "subevm",
   networks: {
+    //no mainnet (yet)
     subevm: {
       url: "https://evm-testnet.dev.opentensor.ai",
       accounts: [config.ethPrivateKey],

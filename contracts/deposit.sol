@@ -20,7 +20,7 @@ interface IDepositTracker {
 }
 
 contract DepositTracker is IDepositTracker {
-    mapping(address => bool) private uniqueDepositors;
+    mapping(address => bool) public uniqueDepositors;
     mapping(bytes32 => mapping(address => bool)) public associationSet;
     mapping(bytes32 => address[]) public associations;
 
