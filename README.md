@@ -32,6 +32,7 @@
 
 ### Prerequisites
 - $TAO in a compatible wallet (bittensor cli wallet)
+- Comfortable with bittensor EVM and moving funds between ss58 and H160 addresses
 - Basic understanding of zk-SNARKs and Bittensor subnets.
 
 ### Installation
