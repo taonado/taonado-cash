@@ -6,7 +6,7 @@ const ethPrivateKey: string =
 
 const subSeed: string = "//Alice"; // this can be found in the hotkey file, "secretSeed"
 
-const env: string = "local";
+const env: string = "local"; // local, testnet, mainnet
 const netuid: BigNumberish = "0x99";
 
 export const config = {

@@ -9,7 +9,7 @@ const hardhatConfig: HardhatUserConfig = {
   networks: {
     //no mainnet (yet)
     subevm: {
-      url: "https://evm-testnet.dev.opentensor.ai",
+      url: "https://test.chain.opentensor.ai",
       accounts: [config.ethPrivateKey],
     },
     local: {
