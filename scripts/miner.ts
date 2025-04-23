@@ -23,7 +23,7 @@ import { cryptoWaitReady } from "@polkadot/util-crypto";
 import { ss58ToH160, publicKeyToHex, convertH160ToSS58 } from "./address-utils";
 import { config } from "../config";
 import { deposit } from "./deposit";
-import { getTAOBalance } from "./get-balance";
+import { getTAOBalance } from "./balance";
 import { Contracts } from "./contracts";
 import { getDeployedContract } from "./store";
 import { DepositTracker, DepositTracker__factory } from "../typechain-types";

@@ -14,7 +14,7 @@ The python equivalent is actually a lot more complex, and requires a lot more co
 import { ethers } from "hardhat";
 import { convertH160ToSS58 } from "./address-utils";
 import { config } from "../config";
-import { getTAOBalance } from "./get-balance";
+import { getTAOBalance } from "./balance";
 import { INeuron__factory, WeightsV1__factory } from "../typechain-types";
 let INeuron_ADDRESS = "0x0000000000000000000000000000000000000804";
 

@@ -10,6 +10,7 @@ import { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signers";
 import { AddressLike, BigNumberish } from "ethers";
 import { Contracts } from "./contracts";
 import { config } from "../config";
+
 let deployer: HardhatEthersSigner | undefined;
 let IMetagraph_ADDRESS: AddressLike =
   "0x0000000000000000000000000000000000000802";

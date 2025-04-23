@@ -1,5 +1,5 @@
 import { ethers } from "hardhat";
-import { Contracts, getWTAOContract } from "./contracts";
+import { getWTAOContract } from "./contracts";
 import { config } from "../config";
 import { WTAO__factory } from "../typechain-types";
 
