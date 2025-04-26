@@ -8,6 +8,7 @@
     "deploy-testnet": "npx hardhat run scripts/deploy.ts --network subevm",
     "test": "REPORT_GAS=true npx hardhat test --network hardhat",
     "miner-local": "npx hardhat run scripts/miner.ts --network local",
+    "miner-testnet": "npx hardhat run scripts/miner.ts --network subevm",
     "vali-local": "npx hardhat run scripts/vali.ts --network local",
     "deposit-local": "npx hardhat run scripts/deposit/main --network local",
     "withdraw-local": "npx hardhat run scripts/withdrawal.ts --network local",

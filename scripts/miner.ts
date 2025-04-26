@@ -14,6 +14,8 @@ Weights are calculated entirely on-chain (a bittensor first?)
 
 It's recommended to familiarize yourself with a local evm instance (making deposits/withdrawals between H160/ss58 addresses) before using real funds.
 
+You only need to run this script once per miner HK. Afterwards you can use deposit/withdrawal scripts to manage funds.
+
 p.s. please read the above before mining. 🌪️
 */
 
