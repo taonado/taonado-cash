@@ -10,6 +10,7 @@
     "miner-local": "npx hardhat run scripts/miner.ts --network local",
     "miner-testnet": "npx hardhat run scripts/miner.ts --network subevm",
     "vali-local": "npx hardhat run scripts/vali.ts --network local",
+    "vali-testnet": "npx hardhat run scripts/vali.ts --network subevm",
     "deposit-local": "npx hardhat run scripts/deposit/main --network local",
     "withdraw-local": "npx hardhat run scripts/withdrawal.ts --network local",
     "balance-local": "npx hardhat run scripts/get-balance.ts --network local",
