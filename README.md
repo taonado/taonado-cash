@@ -19,7 +19,7 @@
 ## 📖 How It Works
 
 ### Deposit
-1. **Select a Pool**: Choose a deposit size (0.1, 1, 10, or 1000 $TAO).
+1. **Select a Pool**: Choose a deposit size (0.1, 1, 10, 100, or 1000 $TAO).
 2. **Generate Secret**: Create a cryptographic secret (note) to later claim your deposit.
 3. **Submit Transaction**: Deposit $TAO into the Taonado smart contract.
 
@@ -89,7 +89,7 @@ Taonado introduces Anonymous Incentive (AI), a novel mechanism enabling Bittenso
 ### 💧 Anti-Monitoring Liquidity (AML)
 Taonado introduces AML (Anti Monitoring Liquidity), a novel mechanism that enhances privacy for Bittensor transactions while maintaining seamless liquidity. Mixer Liquidity (ML) quantifies the total TAO held in Taonado's shielded pools. Higher ML enhances privacy guarantees by creating larger anonymity sets while enabling seamless withdrawals.
 
-- Pool Depth Tracking: Realtime display of TAO in 0.1/1/10/1000 pools.
+- Pool Depth Tracking: Realtime display of TAO in 0.1/1/10/100/1000 pools.
 
 - Anonymity Multiplier: Larger pools = stronger privacy.
 
@@ -125,7 +125,7 @@ Taonado introduces AML (Anti Monitoring Liquidity), a novel mechanism that enhan
 
 ### 1. ✅ TAO Core Pools
 
-- Standard pools (0.1/1/10/1000 TAO) enabled with basic deposit/withdraw.
+- Standard pools (0.1/1/10/100/1000 TAO) enabled with basic deposit/withdraw.
 
 - Miners move liquidity into the core pools.
 
