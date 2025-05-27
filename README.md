@@ -11,7 +11,7 @@
 ## 🚀 Features
 
 - **Zero Knowledge Privacy**: Leverage zk-SNARKs to anonymize TAO transactions.
-- **Flexible Deposit Pools**: Deposit 0.1, 1, 10, or 1000 TAO into shielded pools.
+- **Flexible Deposit Pools**: Deposit 0.1, 1, 10, 100, or 1000 TAO into shielded pools.
 - **Incentivized Participation**: Earn rewards for depositing TAO, enhancing network security.
 - **Permissionless Withdrawals**: Withdraw TAO to any address without revealing prior activity.
 - **Bittensor Integration**: Seamlessly interact with TAO subnets and the broader ecosystem.
