@@ -9,7 +9,7 @@ async function main() {
   console.log("EVM Wallet:", wallet.address);
 
   const ss58_address = convertH160ToSS58(wallet.address);
-  console.log("ss58 address:", ss58_address);
+  console.log("ss58 equivalent:", ss58_address);
 
   const tao_balance = await getTAOBalance(wallet.address);
   console.log("TAO Balance:", tao_balance);
