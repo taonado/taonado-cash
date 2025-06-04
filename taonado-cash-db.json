@@ -424,6 +424,431 @@
             },
             "runner": "<SignerWithAddress 0xf72cC2592BF6224D73D7a1BFB756f38DbB814804>",
             "filters": {}
+        },
+        "mainnet": {
+            "target": "0x9Dc08C6e2BF0F1eeD1E00670f80Df39145529F81",
+            "interface": {
+                "fragments": [
+                    {
+                        "type": "event",
+                        "inputs": [
+                            {
+                                "name": "src",
+                                "type": "address",
+                                "baseType": "address",
+                                "indexed": true,
+                                "components": null,
+                                "arrayLength": null,
+                                "arrayChildren": null
+                            },
+                            {
+                                "name": "guy",
+                                "type": "address",
+                                "baseType": "address",
+                                "indexed": true,
+                                "components": null,
+                                "arrayLength": null,
+                                "arrayChildren": null
+                            },
+                            {
+                                "name": "wad",
+                                "type": "uint256",
+                                "baseType": "uint256",
+                                "indexed": false,
+                                "components": null,
+                                "arrayLength": null,
+                                "arrayChildren": null
+                            }
+                        ],
+                        "name": "Approval",
+                        "anonymous": false
+                    },
+                    {
+                        "type": "event",
+                        "inputs": [
+                            {
+                                "name": "dst",
+                                "type": "address",
+                                "baseType": "address",
+                                "indexed": true,
+                                "components": null,
+                                "arrayLength": null,
+                                "arrayChildren": null
+                            },
+                            {
+                                "name": "wad",
+                                "type": "uint256",
+                                "baseType": "uint256",
+                                "indexed": false,
+                                "components": null,
+                                "arrayLength": null,
+                                "arrayChildren": null
+                            }
+                        ],
+                        "name": "Deposit",
+                        "anonymous": false
+                    },
+                    {
+                        "type": "event",
+                        "inputs": [
+                            {
+                                "name": "src",
+                                "type": "address",
+                                "baseType": "address",
+                                "indexed": true,
+                                "components": null,
+                                "arrayLength": null,
+                                "arrayChildren": null
+                            },
+                            {
+                                "name": "dst",
+                                "type": "address",
+                                "baseType": "address",
+                                "indexed": true,
+                                "components": null,
+                                "arrayLength": null,
+                                "arrayChildren": null
+                            },
+                            {
+                                "name": "wad",
+                                "type": "uint256",
+                                "baseType": "uint256",
+                                "indexed": false,
+                                "components": null,
+                                "arrayLength": null,
+                                "arrayChildren": null
+                            }
+                        ],
+                        "name": "Transfer",
+                        "anonymous": false
+                    },
+                    {
+                        "type": "event",
+                        "inputs": [
+                            {
+                                "name": "src",
+                                "type": "address",
+                                "baseType": "address",
+                                "indexed": true,
+                                "components": null,
+                                "arrayLength": null,
+                                "arrayChildren": null
+                            },
+                            {
+                                "name": "wad",
+                                "type": "uint256",
+                                "baseType": "uint256",
+                                "indexed": false,
+                                "components": null,
+                                "arrayLength": null,
+                                "arrayChildren": null
+                            }
+                        ],
+                        "name": "Withdrawal",
+                        "anonymous": false
+                    },
+                    {
+                        "type": "function",
+                        "inputs": [
+                            {
+                                "name": "",
+                                "type": "address",
+                                "baseType": "address",
+                                "components": null,
+                                "arrayLength": null,
+                                "arrayChildren": null
+                            },
+                            {
+                                "name": "",
+                                "type": "address",
+                                "baseType": "address",
+                                "components": null,
+                                "arrayLength": null,
+                                "arrayChildren": null
+                            }
+                        ],
+                        "name": "allowance",
+                        "constant": true,
+                        "outputs": [
+                            {
+                                "name": "",
+                                "type": "uint256",
+                                "baseType": "uint256",
+                                "components": null,
+                                "arrayLength": null,
+                                "arrayChildren": null
+                            }
+                        ],
+                        "stateMutability": "view",
+                        "payable": false,
+                        "gas": null
+                    },
+                    {
+                        "type": "function",
+                        "inputs": [
+                            {
+                                "name": "guy",
+                                "type": "address",
+                                "baseType": "address",
+                                "components": null,
+                                "arrayLength": null,
+                                "arrayChildren": null
+                            },
+                            {
+                                "name": "wad",
+                                "type": "uint256",
+                                "baseType": "uint256",
+                                "components": null,
+                                "arrayLength": null,
+                                "arrayChildren": null
+                            }
+                        ],
+                        "name": "approve",
+                        "constant": false,
+                        "outputs": [
+                            {
+                                "name": "",
+                                "type": "bool",
+                                "baseType": "bool",
+                                "components": null,
+                                "arrayLength": null,
+                                "arrayChildren": null
+                            }
+                        ],
+                        "stateMutability": "nonpayable",
+                        "payable": false,
+                        "gas": null
+                    },
+                    {
+                        "type": "function",
+                        "inputs": [
+                            {
+                                "name": "",
+                                "type": "address",
+                                "baseType": "address",
+                                "components": null,
+                                "arrayLength": null,
+                                "arrayChildren": null
+                            }
+                        ],
+                        "name": "balanceOf",
+                        "constant": true,
+                        "outputs": [
+                            {
+                                "name": "",
+                                "type": "uint256",
+                                "baseType": "uint256",
+                                "components": null,
+                                "arrayLength": null,
+                                "arrayChildren": null
+                            }
+                        ],
+                        "stateMutability": "view",
+                        "payable": false,
+                        "gas": null
+                    },
+                    {
+                        "type": "function",
+                        "inputs": [],
+                        "name": "decimals",
+                        "constant": true,
+                        "outputs": [
+                            {
+                                "name": "",
+                                "type": "uint8",
+                                "baseType": "uint8",
+                                "components": null,
+                                "arrayLength": null,
+                                "arrayChildren": null
+                            }
+                        ],
+                        "stateMutability": "view",
+                        "payable": false,
+                        "gas": null
+                    },
+                    {
+                        "type": "function",
+                        "inputs": [],
+                        "name": "deposit",
+                        "constant": false,
+                        "outputs": [],
+                        "stateMutability": "payable",
+                        "payable": true,
+                        "gas": null
+                    },
+                    {
+                        "type": "function",
+                        "inputs": [],
+                        "name": "name",
+                        "constant": true,
+                        "outputs": [
+                            {
+                                "name": "",
+                                "type": "string",
+                                "baseType": "string",
+                                "components": null,
+                                "arrayLength": null,
+                                "arrayChildren": null
+                            }
+                        ],
+                        "stateMutability": "view",
+                        "payable": false,
+                        "gas": null
+                    },
+                    {
+                        "type": "function",
+                        "inputs": [],
+                        "name": "symbol",
+                        "constant": true,
+                        "outputs": [
+                            {
+                                "name": "",
+                                "type": "string",
+                                "baseType": "string",
+                                "components": null,
+                                "arrayLength": null,
+                                "arrayChildren": null
+                            }
+                        ],
+                        "stateMutability": "view",
+                        "payable": false,
+                        "gas": null
+                    },
+                    {
+                        "type": "function",
+                        "inputs": [],
+                        "name": "totalSupply",
+                        "constant": true,
+                        "outputs": [
+                            {
+                                "name": "",
+                                "type": "uint256",
+                                "baseType": "uint256",
+                                "components": null,
+                                "arrayLength": null,
+                                "arrayChildren": null
+                            }
+                        ],
+                        "stateMutability": "view",
+                        "payable": false,
+                        "gas": null
+                    },
+                    {
+                        "type": "function",
+                        "inputs": [
+                            {
+                                "name": "dst",
+                                "type": "address",
+                                "baseType": "address",
+                                "components": null,
+                                "arrayLength": null,
+                                "arrayChildren": null
+                            },
+                            {
+                                "name": "wad",
+                                "type": "uint256",
+                                "baseType": "uint256",
+                                "components": null,
+                                "arrayLength": null,
+                                "arrayChildren": null
+                            }
+                        ],
+                        "name": "transfer",
+                        "constant": false,
+                        "outputs": [
+                            {
+                                "name": "",
+                                "type": "bool",
+                                "baseType": "bool",
+                                "components": null,
+                                "arrayLength": null,
+                                "arrayChildren": null
+                            }
+                        ],
+                        "stateMutability": "nonpayable",
+                        "payable": false,
+                        "gas": null
+                    },
+                    {
+                        "type": "function",
+                        "inputs": [
+                            {
+                                "name": "src",
+                                "type": "address",
+                                "baseType": "address",
+                                "components": null,
+                                "arrayLength": null,
+                                "arrayChildren": null
+                            },
+                            {
+                                "name": "dst",
+                                "type": "address",
+                                "baseType": "address",
+                                "components": null,
+                                "arrayLength": null,
+                                "arrayChildren": null
+                            },
+                            {
+                                "name": "wad",
+                                "type": "uint256",
+                                "baseType": "uint256",
+                                "components": null,
+                                "arrayLength": null,
+                                "arrayChildren": null
+                            }
+                        ],
+                        "name": "transferFrom",
+                        "constant": false,
+                        "outputs": [
+                            {
+                                "name": "",
+                                "type": "bool",
+                                "baseType": "bool",
+                                "components": null,
+                                "arrayLength": null,
+                                "arrayChildren": null
+                            }
+                        ],
+                        "stateMutability": "nonpayable",
+                        "payable": false,
+                        "gas": null
+                    },
+                    {
+                        "type": "function",
+                        "inputs": [
+                            {
+                                "name": "wad",
+                                "type": "uint256",
+                                "baseType": "uint256",
+                                "components": null,
+                                "arrayLength": null,
+                                "arrayChildren": null
+                            }
+                        ],
+                        "name": "withdraw",
+                        "constant": false,
+                        "outputs": [],
+                        "stateMutability": "nonpayable",
+                        "payable": false,
+                        "gas": null
+                    },
+                    {
+                        "type": "fallback",
+                        "inputs": [],
+                        "payable": true
+                    }
+                ],
+                "deploy": {
+                    "type": "constructor",
+                    "inputs": [],
+                    "payable": false,
+                    "gas": null
+                },
+                "fallback": null,
+                "receive": true
+            },
+            "runner": "<SignerWithAddress 0xf72cC2592BF6224D73D7a1BFB756f38DbB814804>",
+            "filters": {}
         }
     },
     "DepositTracker": {

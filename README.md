@@ -1,12 +1,14 @@
 <div align="center">
 
-# [🌪️ TAONADO.CASH](https://taonado.cash)
+# [🌪️ TAONADO.CASH 🌀](https://taonado.cash)
 
 </div>
 
 # A Privacy Preserving TAO Mixer on Bittensor
 
-**Taonado** is a zero knowledge (ZK) based token mixer for the Bittensor ($TAO) ecosystem, inspired by the privacy principles of Tornado Cash. It enables users to deposit and withdraw TAO tokens with complete anonymity, severing the onchain link between sender and receiver addresses. Built to align with Bittensor's incentivized network, Taonado rewards participants for contributing to network privacy and security.
+**Taonado** is a zero knowledge (ZK) based token mixer for the Bittensor ($TAO) ecosystem, inspired by the privacy principles of Tornado Cash.
+It enables users to deposit and withdraw TAO tokens with complete anonymity, severing the onchain link between sender and receiver addresses.
+Built to align with Bittensor's incentivized network, Taonado rewards participants for contributing to network privacy and security.
 
 ## 🚀 Features
 
@@ -41,6 +43,12 @@ git clone https://github.com/taonado/taonado-cash
 cd taonado-cash && yarn
 cp config-example.ts config.ts #fill in with details
 yarn run build
+```
+
+If you don't already have `nodejs`, `npm`, or `yarn` installed..
+```bash
+sudo apt install nodejs npm
+npm install --global yarn
 ```
 
 ### Miners
@@ -177,7 +185,10 @@ The only thing we do know:
 
 ## FAQs
 - Can I mine as a validator? Sure, why not.
-- Do miners need to run anything? Nope, all activities take place within the EVM
+- Do miners need to run anything? Nope, all activities take place within the EVM.
+- Why don't you use the uid-lookup precompile in place of the DepositTracker contract? Unfortunately there is no way to set the association through the EVM, defeating it's purpose.
+Since there is now SDK currently any miner/vali would have to use the polkdot web UI which is a blocker - many (if not most) will not have their coldkey in a browser compatible wallet
+Maybe one day :)
 
 ## 📜 License
 Taonado is MIT licensed. See [LICENSE](LICENSE)
