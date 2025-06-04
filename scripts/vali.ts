@@ -42,7 +42,7 @@ async function main() {
   const neuron = INeuron__factory.connect(INeuron_ADDRESS, evm_wallet);
 
   const weights_contract = WeightsV1__factory.connect(
-    "0x18836D1A366E3B94De5433bf9d33F65B61Eca72A", //mainnet WeightsV1
+    "0x385668d34Dc21e2Be436D95CA4ed8F0A62f5902C", //mainnet WeightsV1
     evm_wallet
   );
 
