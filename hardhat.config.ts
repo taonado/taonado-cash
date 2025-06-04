@@ -5,9 +5,12 @@ import { config } from "./config";
 
 const hardhatConfig: HardhatUserConfig = {
   solidity: "0.8.24",
-  defaultNetwork: "subevm",
+  defaultNetwork: "mainnet",
   networks: {
-    //no mainnet (yet)
+    mainnet: {
+      url: "https://lite.chain.opentensor.ai",
+      accounts: [config.ethPrivateKey],
+    },
     subevm: {
       url: "https://test.chain.opentensor.ai",
       accounts: [config.ethPrivateKey],
