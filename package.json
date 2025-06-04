@@ -4,6 +4,7 @@
   "description": "A Privacy Preserving TAO Mixer on Bittensor",
   "scripts": {
     "build": "npx hardhat compile",
+    "deploy": "npx hardhat run scripts/deploy.ts",
     "deploy-local": "npx hardhat run scripts/deploy.ts --network local",
     "deploy-testnet": "npx hardhat run scripts/deploy.ts --network subevm",
     "test": "REPORT_GAS=true npx hardhat test --network hardhat",
