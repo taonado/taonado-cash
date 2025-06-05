@@ -4,7 +4,7 @@
 --------------------------------
 
 Uses an EVM address as the validator hotkey.
-This requires no TAO on the EVM side, it works the same way as a trad vali once associated with your coldkey.
+This uses a small amount of TAO on the EVM for gas, otherwise it works the same way as a trad vali once associated with your coldkey.
 
 It's pretty light weight, just a script to set weights based on the contract state.
 
@@ -35,7 +35,7 @@ async function main() {
   console.log(`vali EVM mirror ss58: ${evm_mirror_ss58}`); // you must use this address as your vali hotkey
   console.log(
     `vali EVM balance: ${ethers.formatUnits(
-      await getTAOBalance(evm_wallet.address) // you don't need any TAO in your EVM wallet, this is just for visibility
+      await getTAOBalance(evm_wallet.address) // You will need a small amount of TAO on your EVM wallet for gas
     )}t`
   );
 
@@ -52,11 +52,23 @@ async function main() {
     const weights = await weights_contract.getNormalizedWeights();
     console.log("Setting weights...");
     console.log(`weights: ${weights}`);
-    await neuron.setWeights(config.netuid, [...weights[0]], [...weights[1]], 0);
+    try {
+      const response = await neuron.setWeights(
+        config.netuid,
+        [...weights[0]],
+        [...weights[1]],
+        0
+      );
+      console.log("Weights set successfully");
+      console.log("Setting again in 113 blocks...");
+    } catch (e) {
+      console.log("Error setting weights:", e);
+      console.log("Retrying in 113 blocks...");
+    }
   };
 
   await setWeights_loop();
-  setInterval(setWeights_loop, 101 * 12 * 1000); // every 101 blocks or so
+  setInterval(setWeights_loop, 113 * 12 * 1000); // every 113 blocks or so
 }
 
 main().catch((error) => {
