@@ -53,17 +53,11 @@ npm install --global yarn
 
 ### Miners
 Carefully read the instructions and script in [scripts/miner.ts](scripts/miner.ts)
-Once setup:
-```bash
-yarn run deposit-local
-```
 
 ### Validators
 Carefully read the instructions and script in [scripts/vali.ts](scripts/vali.ts)
-Once setup:
-```bash
-yarn run vali-local
-```
+
+Phase 0 is live!
 
 ### Usage (coming soon!)
 1. Deposit TAO:

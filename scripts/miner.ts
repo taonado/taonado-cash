@@ -46,7 +46,7 @@ async function main() {
   const evm_wallet = new ethers.Wallet(config.ethPrivateKey, ethers.provider);
   const evm_mirror_ss58 = convertH160ToSS58(evm_wallet.address);
   console.log(`Miner EVM wallet:      ${evm_wallet.address}`);
-  console.log(`Miner EVM mirror ss58: ${evm_mirror_ss58}`); // you must deposit TAO to this address
+  console.log(`Miner EVM mirror ss58: ${evm_mirror_ss58}`); // you must send TAO to this address before proceeding (for gas + deposits + association tx)
   console.log(
     `Miner EVM balance: ${ethers.formatUnits(
       await getTAOBalance(evm_wallet.address)
