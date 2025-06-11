@@ -19,6 +19,25 @@ const hardhatConfig: HardhatUserConfig = {
       url: "http://127.0.0.1:9944",
       accounts: [config.ethPrivateKey],
     },
+    // for contract verification
+    taostats: {
+      url: "https://evm.taostats.io/api/eth-rpc",
+    },
+  },
+  etherscan: {
+    apiKey: {
+      taostats: "empty",
+    },
+    customChains: [
+      {
+        network: "taostats",
+        chainId: 964,
+        urls: {
+          apiURL: "https://evm.taostats.io/api",
+          browserURL: "https://evm.taostats.io",
+        },
+      },
+    ],
   },
   mocha: {
     timeout: 300000,
