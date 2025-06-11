@@ -39,8 +39,8 @@ describe("Weights", function () {
       ethers.encodeBytes32String(sn_sudo_pk)
     );
 
-    // Deploy WeightsV1
-    const Weights = await ethers.getContractFactory("WeightsV1");
+    // Deploy WeightsV2
+    const Weights = await ethers.getContractFactory("WeightsV2");
     const weights = await Weights.deploy(
       netuid,
       await depositTracker.getAddress(),
@@ -61,6 +61,21 @@ describe("Weights", function () {
       const { weights, owner, addr1, addr2 } = await loadFixture(deployFixture);
 
       const normalizedWeights = await weights.getNormalizedWeights();
+      expect(normalizedWeights[1][0]).to.equal(65535n);
+    });
+
+    it("should burn excess emissions even with unallocated wtao deposits", async function () {
+      const { weights, owner, addr1, addr2, wtao } = await loadFixture(
+        deployFixture
+      );
+
+      let normalizedWeights = await weights.getNormalizedWeights();
+      expect(normalizedWeights[1][0]).to.equal(65535n);
+
+      await wtao.connect(addr1).deposit({ value: ethers.parseEther("113") });
+
+      // should still be 100% burn
+      normalizedWeights = await weights.getNormalizedWeights();
       expect(normalizedWeights[1][0]).to.equal(65535n);
     });
 

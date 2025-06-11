@@ -7,7 +7,7 @@ import "./IWTAO.sol";
 import "./deposit.sol";
 import "./metagraph.sol";
 
-contract WeightsV1 is Ownable {
+contract WeightsV2 is Ownable {
     IWTAO public wtao;
     IMetagraph public metagraph;
     IDepositTracker public depositTracker;
@@ -39,6 +39,7 @@ contract WeightsV1 is Ownable {
         view
         returns (uint16[] memory dests, uint256[] memory weights)
     {
+        uint256 totalAllocated;
         uint16 uidCount = metagraph.getUidCount(netuid);
         dests = new uint16[](uidCount);
         weights = new uint256[](uidCount);
@@ -52,13 +53,15 @@ contract WeightsV1 is Ownable {
                 i++
             ) {
                 address depositer = depositTracker.associations(hotkey, i);
-                weights[uid] += wtao.balanceOf(depositer);
+                uint256 depositerBalance = wtao.balanceOf(depositer);
+                weights[uid] += depositerBalance;
+                totalAllocated += depositerBalance;
             }
         }
 
         // if the total supply is less than the deposit goal, burn excess miner emissions
-        if (wtao.totalSupply() < depositGoal) {
-            weights[burn_uid] = depositGoal - wtao.totalSupply();
+        if (totalAllocated < depositGoal) {
+            weights[burn_uid] = depositGoal - totalAllocated;
         }
     }
 
@@ -71,12 +74,15 @@ contract WeightsV1 is Ownable {
         (dests, unnormalizedWeights) = getWeights();
         weights = new uint16[](unnormalizedWeights.length);
 
-        uint256 currentSupply = wtao.totalSupply();
+        uint256 totalAllocated;
+        for (uint16 i = 1; i < weights.length; i++) {
+            totalAllocated += unnormalizedWeights[i];
+        }
         uint256 denominator;
-        if (currentSupply < depositGoal) {
+        if (totalAllocated < depositGoal) {
             denominator = depositGoal;
         } else {
-            denominator = currentSupply;
+            denominator = totalAllocated;
         }
 
         for (uint16 i = 0; i < weights.length; i++) {
