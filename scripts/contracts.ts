@@ -3,7 +3,7 @@ import { getDeployedContract, contractExists } from "./store";
 enum Contracts {
   WTAO = "WTAO",
   DEPOSIT_TRACKER = "DepositTracker",
-  WEIGHTS = "WeightsV1",
+  WEIGHTS = "WeightsV2",
 }
 
 async function getWTAOContract() {

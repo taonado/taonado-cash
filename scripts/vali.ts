@@ -24,7 +24,7 @@ import { ethers } from "hardhat";
 import { convertH160ToSS58 } from "./address-utils";
 import { config } from "../config";
 import { getTAOBalance } from "./balance";
-import { INeuron__factory, WeightsV1__factory } from "../typechain-types";
+import { INeuron__factory, WeightsV2__factory } from "../typechain-types";
 let INeuron_ADDRESS = "0x0000000000000000000000000000000000000804";
 
 async function main() {
@@ -41,8 +41,8 @@ async function main() {
 
   const neuron = INeuron__factory.connect(INeuron_ADDRESS, evm_wallet);
 
-  const weights_contract = WeightsV1__factory.connect(
-    "0x385668d34Dc21e2Be436D95CA4ed8F0A62f5902C", //mainnet WeightsV1
+  const weights_contract = WeightsV2__factory.connect(
+    "0x385668d34Dc21e2Be436D95CA4ed8F0A62f5902C", //mainnet WeightsV2
     evm_wallet
   );
 

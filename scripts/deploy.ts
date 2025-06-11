@@ -4,7 +4,7 @@ import {
   WTAO__factory,
   DepositTracker__factory,
   MockMetagraph__factory,
-  WeightsV1__factory,
+  WeightsV2__factory,
 } from "../typechain-types";
 import { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signers";
 import { AddressLike, BigNumberish } from "ethers";
@@ -103,10 +103,10 @@ async function deployWeights(
 ) {
   if (await contractExists(Contracts.WEIGHTS)) {
     console.log("Weights contract already exists");
-    const weights = await getDeployedContract<typeof weightsv1>(
+    const weights = await getDeployedContract<typeof weightsv2>(
       Contracts.WEIGHTS
     );
-    const contract = WeightsV1__factory.connect(
+    const contract = WeightsV2__factory.connect(
       weights.target.toString(),
       deployer
     );
@@ -115,18 +115,18 @@ async function deployWeights(
 
   console.log("Deploying Weights contract...");
   const factory = await ethers.getContractFactory(Contracts.WEIGHTS);
-  const weightsv1 = await factory.deploy(
+  const weightsv2 = await factory.deploy(
     netuid,
     _depositTracker,
     IMetagraph_ADDRESS,
     _wtao
   );
 
-  await weightsv1.waitForDeployment();
-  console.log(`Weights deployed to ${weightsv1.target}`);
+  await weightsv2.waitForDeployment();
+  console.log(`WeightsV2 deployed to ${weightsv2.target}`);
 
-  await storeContract<typeof weightsv1>(Contracts.WEIGHTS, weightsv1);
-  return weightsv1;
+  await storeContract<typeof weightsv2>(Contracts.WEIGHTS, weightsv2);
+  return weightsv2;
 }
 
 main().catch((error) => {
