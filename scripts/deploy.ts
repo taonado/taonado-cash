@@ -43,6 +43,8 @@ async function main() {
     // set initial deposit goal to 1000 TAO
     await weights.setDepositGoal(ethers.parseEther("1000"));
 
+    console.log("Contracts deployed and configured successfully! 🌀");
+
     console.log("------ ENV VARS ------");
     console.log(`PUBLIC_WTAO_ADDRESS=${wtao.target}`);
     console.log("----------------------");

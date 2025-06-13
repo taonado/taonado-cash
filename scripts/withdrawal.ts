@@ -27,7 +27,7 @@ async function main() {
   const symbol = await contract.symbol();
   console.log("Token symbol:", symbol);
 
-  // Withdraw 1 ETH from the contract
+  // Withdraw 1 WTAO from the contract
   const amountToWithdraw = ethers.parseEther("1.0");
   console.log(`Withdrawing ${ethers.formatEther(amountToWithdraw)} TAO...`);
 

@@ -40,15 +40,19 @@ Built to align with Bittensor's incentivized network, Taonado rewards participan
 ### Installation
 ```bash
 git clone https://github.com/taonado/taonado-cash
-cd taonado-cash && yarn
+cd taonado-cash && pnpm i
 cp config-example.ts config.ts #fill in with details
-yarn run build
+pnpm build
 ```
 
-If you don't already have `nodejs`, `npm`, or `yarn` installed..
+If you don't already have `pnpm` installed: [pnpm install docs](https://pnpm.io/installation)
+It's recommended to manage `nodejs` through pnpm.
+
+### Tests
+Run the tests and report results.
+
 ```bash
-sudo apt install nodejs npm
-npm install --global yarn
+pnpm test
 ```
 
 ### Miners
@@ -178,11 +182,23 @@ The only thing we do know:
 - 🔄 Capital Fluidity: Privately move TAO between subnets to optimize incentives.
 
 ## FAQs
-- Can I mine as a validator? Sure, why not.
-- Do miners need to run anything? Nope, all activities take place within the EVM.
-- Why don't you use the uid-lookup precompile in place of the DepositTracker contract? Unfortunately there is no way to set the association through the EVM, defeating it's purpose.
-Since there is now SDK currently any miner/vali would have to use the polkdot web UI which is a blocker - many (if not most) will not have their coldkey in a browser compatible wallet
+- Can I mine as a validator?
+  - Sure, why not.
+- Do miners need to run anything?
+  - Nope, all activities take place within the EVM.
+- What are you doing with the deposited TAO?
+  - Nothing. It's in your custody at all times.
+- Why don't you use the uid-lookup precompile in place of the DepositTracker contract?
+  - Unfortunately there is no way to set the association through the EVM, defeating it's purpose.
+Since there is no SDK currently any miner/vali would have to use the polkdot web UI which is a blocker - many (if not most) will not have their coldkey in a browser compatible wallet
 Maybe one day :)
+
+## Contract Verification
+To verify the source code for a deployed contract on the taostats evm explorer. See [hardhat.config.ts](./hardhat.config.ts) for configuration. This does not require a valid config.ts setup with keys etc..
+
+```bash
+pnpm hardhat verify --network taostats 0xDEPLOYED_CONTRACT_ADDRESS "CONSTRUCTOR_PARAM_0" "CONSTRUCTOR_PARAM_0"
+```
 
 ## 📜 License
 Taonado is MIT licensed. See [LICENSE](LICENSE)

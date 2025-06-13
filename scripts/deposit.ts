@@ -1,6 +1,5 @@
 import { ethers } from "hardhat";
-import { Contracts, getWTAOContract } from "./contracts";
-import { config } from "../config";
+import { getWTAOContract } from "./contracts";
 import { WTAO__factory } from "../typechain-types";
 import { Wallet } from "ethers";
 
@@ -43,18 +42,4 @@ async function deposit(wallet: Wallet, amountToDeposit: bigint) {
   return receipt;
 }
 
-async function main() {
-  // Get the wallet with provider
-  const wallet = new ethers.Wallet(config.ethPrivateKey, ethers.provider);
-
-  // Deposit 1 TAO to the contract
-  const amountToDeposit = ethers.parseEther("1.0");
-  await deposit(wallet, amountToDeposit);
-}
-
-// main().catch((error) => {
-//   console.error(error);
-//   process.exitCode = 1;
-// });
-
-export { deposit, main };
+export { deposit };
