@@ -46,6 +46,7 @@ pnpm build
 ```
 
 If you don't already have `pnpm` installed: [pnpm install docs](https://pnpm.io/installation)
+
 It's recommended to manage `nodejs` through pnpm.
 
 ### Tests
