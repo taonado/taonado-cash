@@ -20,6 +20,8 @@ Built to align with Bittensor's incentivized network, Taonado rewards participan
 
 ## 📖 How It Works
 
+For a detailed technical overview of the system architecture, including contract interactions and security considerations, see [ARCHITECTURE.md](./ARCHITECTURE.md).
+
 ### Deposit
 1. **Select a Pool**: Choose a deposit size (0.1, 1, 10, 100, or 1000 $TAO).
 2. **Generate Secret**: Create a cryptographic secret (note) to later claim your deposit.
