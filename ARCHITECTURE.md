@@ -10,7 +10,7 @@ The system is designed with a clear separation of concerns between three main co
 2. **DepositTracker**: Manages deposit associations and tracking
 3. **WeightsV2**: Calculates and normalizes weights based on deposits
 
-## Component Interaction Diagram
+## Subnet Interaction Diagram
 
 ```mermaid
 graph TD
@@ -32,7 +32,7 @@ The `WTAO` contract is responsible for:
 - Maintaining the total supply of wrapped TAO
 
 Key features:
-- Exists outside of our control, it's the standard for wTAO.
+- Exists outside of our control, it's the standard for wTAO and used for other applications on the Bittensor EVM.
 - Direct fund custody
 - Standard token operations (transfer, approve, etc.)
 - No direct interaction with weights or deposit tracking
@@ -94,7 +94,7 @@ Validators maintain the network by:
 1. **Weight Setting**
    - Run a lightweight script to set weights
    - Uses EVM address as validator hotkey
-   - Requires small amount of TAO for gas
+   - Requires small amount of TAO on the validator HK for gas
    - Sets weights every 113 blocks
 
 2. **Process Flow**
