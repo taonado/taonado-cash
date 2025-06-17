@@ -1,6 +1,6 @@
 # Taonado Architecture
 
-This document outlines the architecture of the Taonado system, focusing on the separation between user funds management and weight/deposit tracking.
+This document outlines the architecture of the Taonado Subnet, focusing on the separation between user funds management and weight/deposit tracking.
 
 ## System Overview
 
@@ -33,8 +33,9 @@ The `WTAO` contract is responsible for:
 
 Key features:
 - Exists outside of our control, it's the standard for wTAO and used for other applications on the Bittensor EVM.
-- Direct fund custody
+- Direct fund custody for depositers
 - Standard token operations (transfer, approve, etc.)
+- No ability for admins or protocol to move funds on behalf of users
 - No direct interaction with weights or deposit tracking
 
 ## Deposit Tracking (DepositTracker)
