@@ -3,11 +3,12 @@
 pragma solidity ^0.8.24;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "./IWeights.sol";
 import "./IWTAO.sol";
 import "./deposit.sol";
 import "./metagraph.sol";
 
-contract WeightsV2 is Ownable {
+contract WeightsV2 is Ownable, IWeights {
     IWTAO public wtao;
     IMetagraph public metagraph;
     IDepositTracker public depositTracker;
