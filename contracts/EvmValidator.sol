@@ -46,6 +46,7 @@ contract EvmValidator is Ownable, ReentrancyGuard {
             for (uint16 i = 1; i < metagraph.getUidCount(netuid); i++) {
                 if (metagraph.getHotkey(netuid, i) == hotkey) {
                     weightsArray[i] += metagraph_boost_value;
+                    break;
                 }
             }
         }
@@ -53,7 +54,7 @@ contract EvmValidator is Ownable, ReentrancyGuard {
         _processBounty();
     }
 
-    function operatorSetWeights() public onlyOwner {
+    function operatorSetWeights() external onlyOwner {
         (uint16[] memory dests, uint16[] memory weightsArray) = _getWeights();
         _setWeights(dests, weightsArray);
     }
@@ -119,6 +120,10 @@ contract EvmValidator is Ownable, ReentrancyGuard {
 
     function rescueFunds() public onlyOwner {
         payable(msg.sender).transfer(address(this).balance);
+    }
+
+    // @dev Allows the contract to receive TAO
+    receive() external payable {
     }
 
     modifier setWeightsIntervalPassed() {

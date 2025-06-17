@@ -1,7 +1,4 @@
-import {
-  loadFixture,
-  setCode,
-} from "@nomicfoundation/hardhat-toolbox/network-helpers";
+import { setCode } from "@nomicfoundation/hardhat-toolbox/network-helpers";
 import { ethers } from "hardhat";
 import { IMetagraph_ADDRESS } from "../const";
 
