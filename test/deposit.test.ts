@@ -34,7 +34,7 @@ describe("DepositTracker", function () {
       const depositTracker = await loadFixture(deployTracker);
       const hotkey = eth.randomBytes(32);
       const [wallet, wallet2] = await ethers.getSigners();
-      console.log(wallet.address, wallet2.address);
+
       await depositTracker.associate(hotkey);
 
       const tracker2 = await depositTracker.connect(wallet2);
