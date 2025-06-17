@@ -3,17 +3,15 @@ import { storeContract, contractExists, getDeployedContract } from "./store";
 import {
   WTAO__factory,
   DepositTracker__factory,
-  MockMetagraph__factory,
   WeightsV2__factory,
 } from "../typechain-types";
 import { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signers";
 import { AddressLike, BigNumberish } from "ethers";
 import { Contracts } from "./contracts";
+import { IMetagraph_ADDRESS } from "../const";
 import { config } from "../config";
 
 let deployer: HardhatEthersSigner | undefined;
-let IMetagraph_ADDRESS: AddressLike =
-  "0x0000000000000000000000000000000000000802";
 
 async function main() {
   try {
