@@ -189,25 +189,42 @@ describe("EvmValidator", function () {
     });
   });
 
+  describe("neuronMock", function () {
+    it("should revert when mocked!", async function () {
+      const { neuron, evmValidator, owner, addr1 } = await loadFixture(
+        deployFixture
+      );
+
+      await neuron.setShouldRevertSetWeights(true);
+      await expect(
+        evmValidator
+          .connect(addr1)
+          .setWeights(ethers.encodeBytes32String(sn_sudo_pk))
+      ).to.be.reverted;
+      await neuron.setShouldRevertSetWeights(false);
+      await expect(
+        evmValidator
+          .connect(addr1)
+          .setWeights(ethers.encodeBytes32String(sn_sudo_pk))
+      ).to.not.be.reverted;
+    });
+  });
+
   describe("Emergency Functions", function () {
     describe("rescueFunds", function () {
       it("only owner can call rescueFunds", async function () {
-        const { addr1, evmValidator } = await loadFixture(deployFixture);
+        const { owner, addr1, evmValidator } = await loadFixture(deployFixture);
         await expect(
           evmValidator.connect(addr1).rescueFunds()
         ).to.be.revertedWithCustomError(
           evmValidator,
           "OwnableUnauthorizedAccount"
         );
-      });
-
-      it("owner can call rescueFunds", async function () {
-        const { owner, evmValidator } = await loadFixture(deployFixture);
         await expect(evmValidator.connect(owner).rescueFunds()).to.not.be
           .reverted;
       });
 
-      it("should transfer bounty fees to owner", async function () {
+      it("should transfer remaining bounty fees to owner", async function () {
         const { owner, evmValidator } = await loadFixture(deployFixture);
 
         await owner.sendTransaction({
@@ -217,7 +234,7 @@ describe("EvmValidator", function () {
 
         const balanceBefore = await ethers.provider.getBalance(owner.address);
 
-        await expect(evmValidator.connect(owner).rescueFunds()).to.not.be
+        await expect(await evmValidator.connect(owner).rescueFunds()).to.not.be
           .reverted;
 
         const balanceAfter = await ethers.provider.getBalance(owner.address);
