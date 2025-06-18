@@ -4,8 +4,8 @@ import {
 } from "@nomicfoundation/hardhat-toolbox/network-helpers";
 import { expect } from "chai";
 import { ethers } from "hardhat";
-import { mockMetagraph } from "./metagraph.mock";
-import { AddressLike, BigNumberish, ethers as eth } from "ethers";
+import { mockMetagraph } from "./mock/metagraph.mock";
+import { BigNumberish } from "ethers";
 import { randomBytes } from "crypto";
 
 describe("Weights", function () {

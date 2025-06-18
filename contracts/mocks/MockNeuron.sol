@@ -9,6 +9,12 @@ contract MockNeuron is INeuron {
     // Control whether setWeights should revert
     bool public shouldRevertSetWeights = false;
 
+    // Store the most recent setWeights call
+    uint16 public lastNetuid;
+    uint16[] public lastDests;
+    uint16[] public lastWeights;
+    uint64 public lastVersionKey;
+
     // --- Mock Setup Functions ---
 
     function setShouldRevertSetWeights(bool shouldRevert) external {
@@ -25,7 +31,25 @@ contract MockNeuron is INeuron {
         if (shouldRevertSetWeights) {
             revert("MockNeuron: setWeights reverted");
         }
-        // Do nothing - just don't revert
+        // Store the most recent call
+        lastNetuid = netuid;
+        lastDests = dests;
+        lastWeights = weights;
+        lastVersionKey = versionKey;
+    }
+
+    // Helper to get the last setWeights state
+    function getLastSetWeights()
+        external
+        view
+        returns (
+            uint16 netuid,
+            uint16[] memory dests,
+            uint16[] memory weights,
+            uint64 versionKey
+        )
+    {
+        return (lastNetuid, lastDests, lastWeights, lastVersionKey);
     }
 
     // --- Unused Functions (empty implementations) ---

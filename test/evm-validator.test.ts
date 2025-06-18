@@ -1,8 +1,8 @@
 import { loadFixture } from "@nomicfoundation/hardhat-toolbox/network-helpers";
 import { expect } from "chai";
 import { ethers } from "hardhat";
-import { mockMetagraph } from "./metagraph.mock";
-import { mockNeuron } from "./neuron.mock";
+import { mockMetagraph } from "./mock/metagraph.mock";
+import { mockNeuron } from "./mock/neuron.mock";
 import { AddressLike, BigNumberish, ethers as eth } from "ethers";
 import { randomBytes } from "crypto";
 
@@ -71,15 +71,164 @@ describe("EvmValidator", function () {
     };
   }
 
-  describe("operatorSetWeights", async function () {
+  describe("setWeights", function () {
+    it("should set weights as miner or non-participant", async function () {
+      const {
+        evmValidator,
+        depositTracker,
+        addr1,
+        addr2,
+        metagraph,
+        wtao,
+        weights,
+        neuron,
+      } = await loadFixture(deployFixture);
+
+      const [miner1, miner2] = [randomBytes(32), randomBytes(32)];
+      await metagraph.setHotkey(netuid, 1, miner1);
+      await metagraph.setHotkey(netuid, 2, miner2);
+
+      await depositTracker.connect(addr1).associate(miner1);
+
+      await wtao.connect(addr1).deposit({ value: ethers.parseEther("1") });
+      let normalizedWeights = await weights.getNormalizedWeights();
+
+      await evmValidator
+        .connect(addr2)
+        .setWeights(ethers.encodeBytes32String("0x0"));
+
+      let setWeights = await neuron.getLastSetWeights();
+
+      expect(setWeights[0]).to.equal(netuid);
+      expect(setWeights[1]).to.deep.equal(normalizedWeights[0]);
+      expect(setWeights[2]).to.deep.equal(normalizedWeights[1]);
+      expect(setWeights[3]).to.equal(version_key);
+
+      // same miner adds more wtao
+      await wtao.connect(addr1).deposit({ value: ethers.parseEther("10") });
+
+      normalizedWeights = await weights.getNormalizedWeights();
+
+      // set weights as a non-participant
+      await evmValidator
+        .connect(addr2)
+        .setWeights(ethers.encodeBytes32String("0x0"));
+
+      setWeights = await neuron.getLastSetWeights();
+
+      // weights should match regardless of who set it
+      expect(setWeights[0]).to.equal(netuid);
+      expect(setWeights[1]).to.deep.equal(normalizedWeights[0]);
+      expect(setWeights[2]).to.deep.equal(normalizedWeights[1]);
+      expect(setWeights[3]).to.equal(version_key);
+    });
+
+    it("should pay bounty for running setWeights", async function () {
+      const {
+        evmValidator,
+        depositTracker,
+        addr1,
+        addr2,
+        owner,
+        metagraph,
+        wtao,
+        weights,
+        neuron,
+      } = await loadFixture(deployFixture);
+
+      await owner.sendTransaction({
+        to: evmValidator.getAddress(),
+        value: ethers.parseEther("10"),
+      });
+      await evmValidator
+        .connect(owner)
+        .setSetWeightsBounty(ethers.parseEther("1"));
+
+      const [miner1, miner2] = [randomBytes(32), randomBytes(32)];
+      await metagraph.setHotkey(netuid, 1, miner1);
+      await metagraph.setHotkey(netuid, 2, miner2);
+
+      await depositTracker.connect(addr1).associate(miner1);
+
+      await wtao.connect(addr1).deposit({ value: ethers.parseEther("1") });
+      let normalizedWeights = await weights.getNormalizedWeights();
+
+      const balanceBefore = await ethers.provider.getBalance(addr1.address);
+
+      await evmValidator
+        .connect(addr1)
+        .setWeights(ethers.encodeBytes32String("0x0"));
+
+      const balanceAfter = await ethers.provider.getBalance(addr1.address);
+      expect(balanceAfter - balanceBefore).to.be.approximately(
+        ethers.parseEther("1"),
+        ethers.parseEther("0.001") // enough for the gas difference
+      );
+
+      let setWeights = await neuron.getLastSetWeights();
+
+      // shoudn't change weights
+      expect(setWeights[0]).to.equal(netuid);
+      expect(setWeights[1]).to.deep.equal(normalizedWeights[0]);
+      expect(setWeights[2]).to.deep.equal(normalizedWeights[1]);
+      expect(setWeights[3]).to.equal(version_key);
+    });
+
+    it("should boost weights for running setWeights", async function () {
+      const {
+        evmValidator,
+        depositTracker,
+        addr1,
+        addr2,
+        owner,
+        metagraph,
+        wtao,
+        weights,
+        neuron,
+      } = await loadFixture(deployFixture);
+
+      const metagraphBoostValue = BigInt(250);
+
+      await evmValidator
+        .connect(owner)
+        .setMetagraphBoostValue(metagraphBoostValue);
+
+      const [miner1, miner2] = [randomBytes(32), randomBytes(32)];
+      await metagraph.setHotkey(netuid, 1, miner1);
+      await metagraph.setHotkey(netuid, 2, miner2);
+
+      await depositTracker.connect(addr1).associate(miner1);
+
+      await wtao.connect(addr1).deposit({ value: ethers.parseEther("1") });
+      let normalizedWeights = await weights.getNormalizedWeights();
+
+      await evmValidator.connect(addr1).setWeights(miner2);
+
+      let setWeights = await neuron.getLastSetWeights();
+
+      // shoudn't change weights, except for the metagraph boost
+      expect(setWeights[0]).to.equal(netuid);
+      expect(setWeights[1]).to.deep.equal(normalizedWeights[0]);
+      expect(setWeights[2]).to.deep.equal([
+        normalizedWeights[1][0],
+        normalizedWeights[1][1],
+        normalizedWeights[1][2] + BigInt(metagraphBoostValue),
+      ]);
+      expect(setWeights[3]).to.equal(version_key);
+    });
+  });
+
+  describe("operatorSetWeights", function () {
     it("only owner can call operatorSetWeights", async function () {
-      const { addr1, evmValidator } = await loadFixture(deployFixture);
+      const { owner, addr1, evmValidator } = await loadFixture(deployFixture);
       await expect(
         evmValidator.connect(addr1).operatorSetWeights()
       ).to.be.revertedWithCustomError(
         evmValidator,
         "OwnableUnauthorizedAccount"
       );
+      await expect(evmValidator.connect(owner).operatorSetWeights()).to.not.be
+        .reverted;
     });
 
     it("should set weights", async function () {

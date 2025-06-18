@@ -1,6 +1,6 @@
 import { setCode } from "@nomicfoundation/hardhat-toolbox/network-helpers";
 import { ethers } from "hardhat";
-import { IMetagraph_ADDRESS } from "../const";
+import { IMetagraph_ADDRESS } from "../../const";
 
 export async function mockMetagraph() {
   const Metagraph = await ethers.getContractFactory("MockMetagraph");

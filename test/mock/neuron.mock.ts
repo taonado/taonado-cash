@@ -1,6 +1,6 @@
 import { setCode } from "@nomicfoundation/hardhat-toolbox/network-helpers";
 import { ethers } from "hardhat";
-import { INeuron_ADDRESS } from "../const";
+import { INeuron_ADDRESS } from "../../const";
 
 export async function mockNeuron() {
   const Neuron = await ethers.getContractFactory("MockNeuron");
