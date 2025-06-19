@@ -51,7 +51,6 @@ describe("EvmValidator", function () {
     const EvmValidator = await ethers.getContractFactory("EvmValidator");
     const evmValidator = await EvmValidator.deploy(
       netuid,
-      version_key,
       await weights.getAddress()
     );
 

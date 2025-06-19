@@ -32,11 +32,9 @@ contract EvmValidator is Ownable, ReentrancyGuard {
 
     constructor(
         uint16 _netuid,
-        uint64 _versionKey,
         address _weights
     ) Ownable(msg.sender) {
         netuid = _netuid;
-        versionKey = _versionKey;
         weights = IWeights(_weights);
     }
 
