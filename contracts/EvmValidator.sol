@@ -82,11 +82,18 @@ contract EvmValidator is Ownable, ReentrancyGuard {
         uint16[] memory dests,
         uint16[] memory weightsArray
     ) internal {
-        try neuron.setWeights(netuid, dests, weightsArray, versionKey) {
-            lastSetWeightsBlock = block.number;
-        } catch {
+        bytes memory data = abi.encodeWithSelector(
+            INeuron.setWeights.selector,
+            netuid,
+            dests,
+            weightsArray,
+            versionKey
+        );
+        (bool success, ) = INeuron_ADDRESS.call{gas: gasleft()}(data);
+        if (!success) {
             revert("neuron.setWeights failed");
         }
+        lastSetWeightsBlock = block.number;
     }
 
     // *** Owner Management Functions *** //

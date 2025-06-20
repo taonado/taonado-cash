@@ -1,6 +1,7 @@
 import { getDeployedContract, contractExists } from "./store";
 
 enum Contracts {
+  EVM_VALIDATOR = "EvmValidator",
   WTAO = "WTAO",
   DEPOSIT_TRACKER = "DepositTracker",
   WEIGHTS = "WeightsV2",

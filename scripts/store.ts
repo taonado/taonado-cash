@@ -1,6 +1,6 @@
 import { JsonDB, Config } from "node-json-db";
 import { config } from "../config";
-import { Addressable, BaseContract } from "ethers";
+import { BaseContract } from "ethers";
 
 const db = new JsonDB(new Config("taonado-cash-db", true, true, "/"));
 

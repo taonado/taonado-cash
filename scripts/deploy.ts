@@ -4,6 +4,7 @@ import {
   WTAO__factory,
   DepositTracker__factory,
   WeightsV2__factory,
+  EvmValidator__factory,
 } from "../typechain-types";
 import { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signers";
 import { AddressLike, BigNumberish } from "ethers";
@@ -41,6 +42,14 @@ async function main() {
     // set initial deposit goal to 1000 TAO
     await weights.setDepositGoal(ethers.parseEther("1000"));
 
+    const evmValidator = await deployEvmValidator(
+      config.netuid,
+      weights.target
+    );
+
+    await evmValidator.setSetWeightsBounty(ethers.parseEther("0.0001"));
+    await evmValidator.setMetagraphBoostValue(256);
+
     console.log("Contracts deployed and configured successfully! 🌀");
 
     console.log("------ ENV VARS ------");
@@ -50,6 +59,34 @@ async function main() {
     console.error("Detailed error information:");
     console.error(error);
   }
+}
+
+async function deployEvmValidator(netuid: BigNumberish, _weights: AddressLike) {
+  if (await contractExists(Contracts.EVM_VALIDATOR)) {
+    console.log("EVMValidator contract already exists");
+    const validator = await getDeployedContract<typeof evmValidator>(
+      Contracts.EVM_VALIDATOR
+    );
+    const contract = EvmValidator__factory.connect(
+      validator.target.toString(),
+      deployer
+    );
+    return contract;
+  }
+
+  console.log("Deploying EVMValidator contract...");
+  const factory = await ethers.getContractFactory(Contracts.EVM_VALIDATOR);
+  const evmValidator = await factory.deploy(netuid, _weights);
+
+  await evmValidator.waitForDeployment();
+  console.log(`EVMValidator deployed to ${evmValidator.target}`);
+
+  await storeContract<typeof evmValidator>(
+    Contracts.EVM_VALIDATOR,
+    evmValidator
+  );
+
+  return evmValidator;
 }
 
 async function deployWTAO() {
