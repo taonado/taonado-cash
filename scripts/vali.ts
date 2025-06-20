@@ -57,7 +57,7 @@ async function main() {
   console.log(`evmValidator balance: ${balance}`);
 
   const weights_contract = WeightsV2__factory.connect(
-    "0x375AC062Ed9B68839054f4C207C189ed96c447Da", //mainnet WeightsV2
+    "0xc6Bc37B421Bc7943B4F815bc30fB5792dcFe6251", //mainnet WeightsV2
     evm_wallet
   );
 
