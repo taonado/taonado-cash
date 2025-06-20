@@ -22,10 +22,15 @@ Steps to configure:
 
 import { ethers } from "hardhat";
 import { convertH160ToSS58 } from "./address-utils";
+import { getDeployedContract } from "./store";
 import { config } from "../config";
 import { getTAOBalance } from "./balance";
-import { INeuron__factory, WeightsV2__factory } from "../typechain-types";
-let INeuron_ADDRESS = "0x0000000000000000000000000000000000000804";
+import {
+  WeightsV2__factory,
+  EvmValidator__factory,
+  EvmValidator,
+} from "../typechain-types";
+import { Contracts } from "./contracts";
 
 async function main() {
   // EVM wallet - validator hotkey
@@ -39,26 +44,34 @@ async function main() {
     )}t`
   );
 
-  const neuron = INeuron__factory.connect(INeuron_ADDRESS, evm_wallet);
+  const deployedContract = await getDeployedContract<EvmValidator>(
+    Contracts.EVM_VALIDATOR
+  );
 
-  const weights_contract = WeightsV2__factory.connect(
-    "0xc6Bc37B421Bc7943B4F815bc30fB5792dcFe6251", //mainnet WeightsV2
+  const evmValidator = EvmValidator__factory.connect(
+    deployedContract.target.toString(),
     evm_wallet
   );
 
-  // grab weights from the contract based on current chain state
-  // apply directly using EVM 😎
+  const balance = await ethers.provider.getBalance(evmValidator.getAddress());
+  console.log(`evmValidator balance: ${balance}`);
+
+  const weights_contract = WeightsV2__factory.connect(
+    "0x375AC062Ed9B68839054f4C207C189ed96c447Da", //mainnet WeightsV2
+    evm_wallet
+  );
+
+  // apply weights directly using EVM 😎
   const setWeights_loop = async () => {
     const weights = await weights_contract.getNormalizedWeights();
     console.log("Setting weights...");
     console.log(`weights: ${weights}`);
     try {
-      const response = await neuron.setWeights(
-        config.netuid,
-        [...weights[0]],
-        [...weights[1]],
-        0
-      );
+      const response = await evmValidator
+        .operatorSetWeights({
+          gasLimit: 30000000,
+        })
+        .then((resp) => resp.wait());
       console.log("Weights set successfully");
       console.log("Setting again in 113 blocks...");
     } catch (e) {
