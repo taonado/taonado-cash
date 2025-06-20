@@ -1,9 +1,12 @@
-import { loadFixture } from "@nomicfoundation/hardhat-toolbox/network-helpers";
+import {
+  loadFixture,
+  mine,
+} from "@nomicfoundation/hardhat-toolbox/network-helpers";
 import { expect } from "chai";
 import { ethers } from "hardhat";
 import { mockMetagraph } from "./mock/metagraph.mock";
 import { mockNeuron } from "./mock/neuron.mock";
-import { AddressLike, BigNumberish, ethers as eth } from "ethers";
+import { BigNumberish } from "ethers";
 import { randomBytes } from "crypto";
 
 describe("EvmValidator", function () {
@@ -214,6 +217,26 @@ describe("EvmValidator", function () {
         normalizedWeights[1][2] + BigInt(metagraphBoostValue),
       ]);
       expect(setWeights[3]).to.equal(version_key);
+    });
+
+    it("should enforce block interval for mienrs", async function () {
+      const { evmValidator, addr1, owner } = await loadFixture(deployFixture);
+
+      const weight_block_interval = 250;
+      await evmValidator
+        .connect(owner)
+        .setSetWeightsBlockInterval(weight_block_interval);
+
+      await expect(
+        evmValidator
+          .connect(addr1)
+          .setWeights(ethers.encodeBytes32String("0x0"))
+      ).to.be.revertedWith("Weight set interval has not passed");
+
+      await mine(weight_block_interval + 1);
+
+      await expect(evmValidator.setWeights(ethers.encodeBytes32String("0x0")))
+        .to.not.be.reverted;
     });
   });
 

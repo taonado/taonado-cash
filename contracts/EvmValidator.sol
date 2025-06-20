@@ -13,7 +13,6 @@ import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 contract EvmValidator is Ownable, ReentrancyGuard {
     IWeights public weights;
     IMetagraph public metagraph = IMetagraph(IMetagraph_ADDRESS);
-    INeuron public neuron = INeuron(INeuron_ADDRESS);
 
     // If the caller is present in the metagraph, boost them with a little bit of weight!
     uint16 public metagraph_boost_value;
@@ -26,6 +25,7 @@ contract EvmValidator is Ownable, ReentrancyGuard {
     // The version key for the weights
     uint64 public versionKey;
 
+    // Last time the weights were set
     uint256 public lastSetWeightsBlock;
     // The minimum interval in blocks between set weight calls
     uint256 public setWeightsBlockInterval;
