@@ -4,11 +4,12 @@ This document outlines the architecture of the Taonado Subnet, focusing on the s
 
 ## System Overview
 
-The system is designed with a clear separation of concerns between three main components:
+The system is designed with a clear separation of concerns between four main components:
 
 1. **WTAO (Wrapped TAO)**: Handles user funds and token operations
 2. **DepositTracker**: Manages deposit associations and tracking
 3. **WeightsV2**: Calculates and normalizes weights based on deposits
+4. **EvmValidator**: Manages weight setting operations and provides bounties
 
 ## Subnet Interaction Diagram
 
@@ -19,8 +20,10 @@ graph TD
     Metagraph[Metagraph] -->|Query Hotkeys| WeightsV2
     Miner[Miner] -->|Deposit TAO| WTAO
     Miner -->|Associate Address| DepositTracker
-    Validator[Validator] -->|Set Weights| Neuron(Neuron Precompile)
-    WeightsV2 -->|Provide Weights| Validator
+    EvmValidator[EvmValidator] -->|Set Weights| Neuron(Neuron Precompile)
+    WeightsV2 -->|Provide Weights| EvmValidator
+    User[Any EVM User] -->|Call setWeights| EvmValidator
+    EvmValidator -->|TAO Bounty| User
 ```
 
 ## Fund Management (WTAO)
@@ -66,6 +69,22 @@ Key features:
 - Burn mechanism for excess emissions
 - Validators directly apply the weights, leading to high trust in their scoring.
 
+## Weight Setting (EvmValidator)
+
+The `EvmValidator` contract is responsible for:
+- Managing weight setting operations
+- Providing TAO bounties to incentivize weight setting
+- Enforcing minimum intervals between weight setting calls
+- Boosting miners who participate in weight setting
+
+Key features:
+- Public `setWeights` function that any EVM wallet can call
+- TAO bounty system to cover gas costs
+- Metagraph boost for miners who call the function
+- Block interval enforcement to prevent spam
+- Direct integration with Neuron precompile for weight setting
+- Owner-only functions for configuration management, owner cannot influence weights
+
 ## Miner Operations
 
 Miners participate in the protocol by:
@@ -98,21 +117,47 @@ Validators maintain the network by:
    - Requires small amount of TAO on the validator HK for gas
    - Sets weights every 113 blocks
 
-2. **Process Flow**
+2. **Decentralized Validation**
+   - The miner loop serves as a decentralized validator that:
+     - Takes over the job of validation and setting weights to smart contracts
+     - Can be called by any EVM wallet (not just miners)
+     - Gives miners a boost if they call it themselves
+     - Provides a TAO bounty to cover the cost of gas for running the validation
+   - **Important**: Not every miner needs to run this validation loop
+   - Validation work is distributed across the network
+   - Running the validation script contributes to the network's validation process and rewards participants
+
+3. **Process Flow**
    ```mermaid
    sequenceDiagram
-       Validator->>WeightsV2: Query Normalized Weights
+       EvmValidator->>WeightsV2: Query Normalized Weights
        WeightsV2->>WTAO: Get Balances
        WeightsV2->>DepositTracker: Get Associations
-       WeightsV2-->>Validator: Return Normalized Weights
-       Validator->>Neuron: Set Weights
+       WeightsV2-->>EvmValidator: Return Normalized Weights
+       EvmValidator->>Neuron: Set Weights
+       EvmValidator->>User: Pay TAO Bounty
    ```
 
-3. **Key Features**
+4. **Bounty Flow**
+   ```mermaid
+   sequenceDiagram
+       participant User as Any EVM User
+       participant EV as EvmValidator
+       participant Neuron as Neuron Precompile
+       
+       User->>EV: Call setWeights()
+       EV->>Neuron: Set weights to subnet
+       EV->>User: Transfer TAO bounty
+       Note over EV: If user is miner in metagraph,<br/>apply boost to their weights
+   ```
+
+5. **Key Features**
    - Automated weight setting
    - Direct EVM integration
    - Minimal resource requirements
    - Regular weight updates
+   - Distributed validation responsibility
+   - Incentivized participation through TAO bounties
 
 ## Security Considerations
 
@@ -140,8 +185,10 @@ stateDiagram-v2
     [*] --> DepositTracker: User associates
     DepositTracker --> WeightsV2: Query associations
     WTAO --> WeightsV2: Query balances
-    WeightsV2 --> Validator: Provide weights
-    Validator --> Neuron: Set weights
+    WeightsV2 --> EvmValidator: Provide weights
+    [*] --> EvmValidator: User calls setWeights
+    EvmValidator --> Neuron: Set weights
+    EvmValidator --> [*]: Pay TAO bounty
 ```
 
 This architecture ensures that user funds remain secure in the WTAO contract while allowing the system to track deposits and calculate weights without direct access to the funds.

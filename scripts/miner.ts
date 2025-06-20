@@ -96,6 +96,21 @@ async function main() {
     evm_wallet
   );
 
+  /*
+   * ⚡ THE ONCHAIN VALIDATOR ⚡
+   *
+   * This miner loop transforms your node into a decentralized validator that:
+   *
+   * 🔥 TAKES OVER: Handles validation & weight setting to smart contracts
+   * 🌐 UNIVERSAL ACCESS: Any EVM wallet can call it (not just miners!)
+   * ⚡ MINER BOOST: Miners get extra rewards when they run it themselves
+   * 💰 TAO BOUNTY: Earns TAO to cover gas costs for validation work
+   *
+   * ⚠️  IMPORTANT: You don't need every miner running this loop!
+   *    Validation work is distributed across the network.
+   *    Running this script = contributing to network validation + getting rewarded
+   */
+
   const miner_loop = async () => {
     try {
       const response = await evmValidator
@@ -111,8 +126,10 @@ async function main() {
     }
   };
 
-  await miner_loop();
-  setInterval(miner_loop, 113 * 12 * 1000); // every 113 blocks or so
+  // UNCOMMENT TO MAKE VALIDATION GREAT AGAIN ⚡
+
+  // await miner_loop();
+  // setInterval(miner_loop, 113 * 12 * 1000); // every 113 blocks or so
 }
 
 main().catch((error) => {
