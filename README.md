@@ -64,6 +64,10 @@ Carefully read the instructions and script in [scripts/miner.ts](scripts/miner.t
 ### Validators
 Carefully read the instructions and script in [scripts/vali.ts](scripts/vali.ts)
 
+**🚀We've Gone Validatorless!**
+
+Unlike traditional subnets that require dedicated validators, Taonado uses a decentralized validation approach where any EVM wallet can contribute to weight setting and earn TAO bounties. This eliminates the need for traditional validator infrastructure while maintaining network security through incentivized participation.
+
 Phase 0 is live!
 
 ### Usage (coming soon!)
