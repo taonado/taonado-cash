@@ -28,7 +28,12 @@ import { deposit } from "./deposit";
 import { getTAOBalance } from "./balance";
 import { Contracts } from "./contracts";
 import { getDeployedContract } from "./store";
-import { DepositTracker, DepositTracker__factory } from "../typechain-types";
+import {
+  DepositTracker,
+  DepositTracker__factory,
+  EvmValidator,
+  EvmValidator__factory,
+} from "../typechain-types";
 
 async function main() {
   await cryptoWaitReady();
@@ -81,6 +86,33 @@ async function main() {
     await contract.associate(ss58hotkey.publicKey);
     console.log("Associated EVM wallet with ss58 address");
   }
+
+  const deployedContract = await getDeployedContract<EvmValidator>(
+    Contracts.EVM_VALIDATOR
+  );
+
+  const evmValidator = EvmValidator__factory.connect(
+    deployedContract.target.toString(),
+    evm_wallet
+  );
+
+  const miner_loop = async () => {
+    try {
+      const response = await evmValidator
+        .setWeights(ss58hotkey.publicKey, {
+          gasLimit: 30000000,
+        })
+        .then((resp) => resp.wait());
+      console.log("Weights set successfully");
+      console.log("Setting again in 113 blocks...");
+    } catch (e) {
+      console.log("Error setting weights:", e);
+      console.log("Retrying in 113 blocks...");
+    }
+  };
+
+  await miner_loop();
+  setInterval(miner_loop, 113 * 12 * 1000); // every 113 blocks or so
 }
 
 main().catch((error) => {
