@@ -68,9 +68,7 @@ async function main() {
     console.log(`weights: ${weights}`);
     try {
       const response = await evmValidator
-        .operatorSetWeights({
-          gasLimit: 30000000,
-        })
+        .operatorSetWeights()
         .then((resp) => resp.wait());
       console.log("Weights set successfully");
       console.log("Setting again in 113 blocks...");

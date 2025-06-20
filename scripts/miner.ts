@@ -114,9 +114,7 @@ async function main() {
   const miner_loop = async () => {
     try {
       const response = await evmValidator
-        .setWeights(ss58hotkey.publicKey, {
-          gasLimit: 30000000,
-        })
+        .setWeights(ss58hotkey.publicKey)
         .then((resp) => resp.wait());
       console.log("Weights set successfully");
       console.log("Setting again in 113 blocks...");
