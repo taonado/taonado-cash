@@ -48,6 +48,7 @@ async function main() {
     );
 
     await evmValidator.setSetWeightsBounty(ethers.parseEther("0.01"));
+    await evmValidator.setSetWeightsBlockInterval(339);
     await evmValidator.setMetagraphBoostValue(256);
 
     console.log("Contracts deployed and configured successfully! 🌀");
