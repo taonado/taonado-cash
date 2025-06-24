@@ -3,3 +3,6 @@ export const IMetagraph_ADDRESS: string =
 
 export const INeuron_ADDRESS: string =
   "0x0000000000000000000000000000000000000804";
+
+export const ISubtensorBalanceTransfer_ADDRESS: string =
+  "0x0000000000000000000000000000000000000800";

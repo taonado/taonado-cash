@@ -29,6 +29,12 @@ function publicKeyToHex(publicKey: Uint8Array) {
   return "0x" + Buffer.from(publicKey).toString("hex");
 }
 
+function ss58ToPublicKey(ss58Address: string) {
+  // Get the substrate address public key
+  const publicKey = decodeAddress(ss58Address);
+  return publicKey;
+}
+
 function ss58ToH160(ss58Address: string) {
   // Decode the SS58 address to a Uint8Array public key
   const publicKey = decodeAddress(ss58Address);
@@ -43,4 +49,4 @@ function ss58ToH160(ss58Address: string) {
   return ethereumAddress;
 }
 
-export { convertH160ToSS58, ss58ToH160, publicKeyToHex };
+export { convertH160ToSS58, ss58ToH160, publicKeyToHex, ss58ToPublicKey };

@@ -22,7 +22,10 @@
     "withdraw-testnet": "hardhat run scripts/withdrawal.ts --network subevm",
     "balance": "hardhat run scripts/get-balance.ts",
     "balance-local": "hardhat run scripts/get-balance.ts --network local",
-    "balance-testnet": "hardhat run scripts/get-balance.ts --network subevm"
+    "balance-testnet": "hardhat run scripts/get-balance.ts --network subevm",
+    "transfer": "hardhat run scripts/transfer.ts",
+    "transfer-local": "hardhat run scripts/transfer.ts --network local",
+    "transfer-testnet": "hardhat run scripts/transfer.ts --network subevm"
   },
   "license": "MIT",
   "devDependencies": {
