@@ -3,7 +3,7 @@
           🌪️ README 🌪️          
 --------------------------------
 
-Uses an EVM address as the validator hotkey.
+Uses an EVM contract address as the validator hotkey.
 This uses a small amount of TAO on the EVM for gas, otherwise it works the same way as a trad vali once associated with your coldkey.
 
 It's pretty light weight, just a script to set weights based on the contract state.
@@ -15,8 +15,9 @@ The python equivalent is actually a lot more complex, and requires more code to 
 Steps to configure:
 
 1. Generate a new EVM wallet, set the private key in config.ts
-2. Set the ss58 mirror address as your vali hotkey, you can get this address from the output of this script.
+2. Set the ss58 mirror address of the deployed contract as your vali hotkey, you can get this address from the output of this script.
 3. Run this script to set weights
+4. (optional) Allow others (miners) to set weights by setting up the bounty payment amounts and funding the contract with TAO
 
 */
 
@@ -37,7 +38,7 @@ async function main() {
   const evm_wallet = new ethers.Wallet(config.ethPrivateKey, ethers.provider);
   const evm_mirror_ss58 = convertH160ToSS58(evm_wallet.address);
   console.log(`vali EVM wallet:      ${evm_wallet.address}`);
-  console.log(`vali EVM mirror ss58: ${evm_mirror_ss58}`); // you must use this address as your vali hotkey
+  console.log(`vali EVM mirror ss58: ${evm_mirror_ss58}`);
   console.log(
     `vali EVM balance: ${ethers.formatUnits(
       await getTAOBalance(evm_wallet.address) // You will need a small amount of TAO on your EVM wallet for gas
@@ -51,6 +52,16 @@ async function main() {
   const evmValidator = EvmValidator__factory.connect(
     deployedContract.target.toString(),
     evm_wallet
+  );
+
+  console.log(
+    "Using evmValidator contract: ",
+    await evmValidator.getAddress() // you must use this contractaddress as your vali hotkey (ss58 equivalent, see tools/swap-hk.py for setting this)
+  );
+
+  console.log(
+    "EvmValidator mirror ss58:    ",
+    convertH160ToSS58(await evmValidator.getAddress())
   );
 
   const balance = await ethers.provider.getBalance(evmValidator.getAddress());
