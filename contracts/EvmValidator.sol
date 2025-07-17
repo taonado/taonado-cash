@@ -6,18 +6,24 @@ import "./neuron.sol";
 import "./IWeights.sol";
 import "./metagraph.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol";
 
 // @dev This contract is used to set the weights for a validator.
 // Deploy this contract and then set it's address as the validator hotkey.
-contract EvmValidator is Ownable, ReentrancyGuard {
+contract EvmValidator is
+    OwnableUpgradeable,
+    UUPSUpgradeable,
+    ReentrancyGuardUpgradeable
+{
     IWeights public weights;
-    IMetagraph public metagraph = IMetagraph(IMetagraph_ADDRESS);
+    IMetagraph public metagraph;
 
     // If the caller is present in the metagraph, boost them with a little bit of weight!
     uint16 public metagraph_boost_value;
 
-    // The bounty for setting weights, in RAO.
+    // The bounty for setting weights, in wei (1e-18 TAO).
     uint256 public setWeightsBounty;
 
     // The subnet ID
@@ -30,15 +36,36 @@ contract EvmValidator is Ownable, ReentrancyGuard {
     // The minimum interval in blocks between set weight calls
     uint256 public setWeightsBlockInterval;
 
-    constructor(
-        uint16 _netuid,
-        address _weights
-    ) Ownable(msg.sender) {
-        netuid = _netuid;
-        weights = IWeights(_weights);
+    // extra gas to cover refund logic itself; owner can tune this
+    uint256 public refundOverhead;
+
+    event BountyPaid(
+        address indexed who,
+        uint256 gasUsedByCall,
+        uint256 weiRefunded,
+        uint256 gasUsedByBookkeeping
+    );
+
+    modifier refundGas() {
+        uint256 gasStart = gasleft();
+        _;
+        _processBounty(gasStart);
     }
 
-    function setWeights(bytes32 hotkey) public setWeightsIntervalPassed nonReentrant {
+    function initialize(uint16 _netuid, address _weights) public initializer {
+        __Ownable_init(msg.sender);
+        __UUPSUpgradeable_init();
+        __ReentrancyGuard_init();
+
+        netuid = _netuid;
+        metagraph = IMetagraph(IMetagraph_ADDRESS);
+        weights = IWeights(_weights);
+        refundOverhead = 15_000;
+    }
+
+    function setWeights(
+        bytes32 hotkey
+    ) public setWeightsIntervalPassed nonReentrant refundGas {
         (uint16[] memory dests, uint16[] memory weightsArray) = _getWeights();
         if (metagraph_boost_value > 0 && hotkey != bytes32(0)) {
             for (uint16 i = 1; i < metagraph.getUidCount(netuid); i++) {
@@ -49,7 +76,6 @@ contract EvmValidator is Ownable, ReentrancyGuard {
             }
         }
         _setWeights(dests, weightsArray);
-        _processBounty();
     }
 
     function operatorSetWeights() external onlyOwner {
@@ -59,12 +85,28 @@ contract EvmValidator is Ownable, ReentrancyGuard {
 
     // *** Internal Functions *** //
 
-    function _processBounty() internal {
-        require(address(this).balance >= setWeightsBounty, "Insufficient balance, contact the owner");
-        if (setWeightsBounty > 0) {
-            if (msg.sender != owner()) {
-                payable(msg.sender).transfer(setWeightsBounty);
-            }
+    function _processBounty(uint256 gasStart) internal {
+        uint256 gasBeforeBookkeeping = gasleft();
+        uint256 gasUsed = gasStart - gasleft();
+        uint256 refundAmount = (gasUsed + refundOverhead) *
+            tx.gasprice +
+            setWeightsBounty;
+
+        require(
+            address(this).balance >= refundAmount,
+            "Insufficient balance, contact the owner"
+        );
+        if (msg.sender != owner()) {
+            (bool ok, ) = msg.sender.call{value: refundAmount}("");
+            require(ok, "refund failed");
+
+            uint256 bookkeepingGasUsed = gasBeforeBookkeeping - gasleft();
+            emit BountyPaid(
+                msg.sender,
+                gasUsed,
+                refundAmount,
+                bookkeepingGasUsed
+            );
         }
     }
 
@@ -89,7 +131,8 @@ contract EvmValidator is Ownable, ReentrancyGuard {
             weightsArray,
             versionKey
         );
-        (bool success, ) = INeuron_ADDRESS.call{gas: gasleft()}(data);
+        uint256 fg = gasleft() - 5_000;
+        (bool success, ) = INeuron_ADDRESS.call{gas: fg}(data);
         if (!success) {
             revert("neuron.setWeights failed");
         }
@@ -116,10 +159,9 @@ contract EvmValidator is Ownable, ReentrancyGuard {
         setWeightsBounty = _setWeightsBounty;
     }
 
-    function setSetWeightsBlockInterval(uint256 _setWeightsBlockInterval)
-        public
-        onlyOwner
-    {
+    function setSetWeightsBlockInterval(
+        uint256 _setWeightsBlockInterval
+    ) public onlyOwner {
         setWeightsBlockInterval = _setWeightsBlockInterval;
     }
 
@@ -127,9 +169,12 @@ contract EvmValidator is Ownable, ReentrancyGuard {
         payable(msg.sender).transfer(address(this).balance);
     }
 
-    // @dev Allows the contract to receive TAO
-    receive() external payable {
+    function setRefundOverhead(uint256 _refundOverhead) public onlyOwner {
+        refundOverhead = _refundOverhead;
     }
+
+    // @dev Allows the contract to receive TAO
+    receive() external payable {}
 
     modifier setWeightsIntervalPassed() {
         require(
@@ -138,4 +183,8 @@ contract EvmValidator is Ownable, ReentrancyGuard {
         );
         _;
     }
+
+    function _authorizeUpgrade(
+        address newImplementation
+    ) internal override onlyOwner {}
 }
