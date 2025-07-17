@@ -131,7 +131,7 @@ contract EvmValidator is
             weightsArray,
             versionKey
         );
-        uint256 fg = gasleft() - 5_000;
+        uint256 fg = gasleft() - refundOverhead;
         (bool success, ) = INeuron_ADDRESS.call{gas: fg}(data);
         if (!success) {
             revert("neuron.setWeights failed");
