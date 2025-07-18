@@ -25,6 +25,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
+      - name: Set env
+        run: cp config-example.ts config.ts
+
       - name: Compile contracts
         run: pnpm build
 

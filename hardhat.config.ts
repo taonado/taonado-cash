@@ -2,19 +2,9 @@ import { HardhatUserConfig } from "hardhat/config";
 import "@nomicfoundation/hardhat-toolbox";
 import "@openzeppelin/hardhat-upgrades";
 import "@nomicfoundation/hardhat-verify";
+import { config } from "./config";
 
-let ethPrivateKey = process.env.ETH_PRIVATE_KEY || "";
-
-if (process.env.CI) {
-  // Only import config-example.ts in CI
-  ethPrivateKey = require("./config-example").config.ethPrivateKey || ethPrivateKey;
-} else {
-  try {
-    ethPrivateKey = require("./config").config.ethPrivateKey || ethPrivateKey;
-  } catch (e) {
-    // fallback to env or empty
-  }
-}
+let ethPrivateKey = process.env.ETH_PRIVATE_KEY || config.ethPrivateKey || "";
 
 const hardhatConfig: HardhatUserConfig = {
   solidity: "0.8.24",
