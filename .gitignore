@@ -5,6 +5,7 @@ node_modules
 # Hardhat files and other artifacts
 /cache
 /artifacts
+/build
 deployed-contract.json
 
 # TypeChain files
