@@ -189,5 +189,31 @@ describe("ERC20Taonado", function () {
         taonado_erc20.withdraw(...badArgs)
       ).to.be.revertedWith("Invalid withdraw proof");
     });
+
+    it("should reject invalid proofs", async function () {
+      const { wtao, taonado_erc20, wallet, deposit, note, proof, args } =
+        await loadFixture(setupAndMakeDeposit);
+
+      const bad_proof_bytes = Buffer.from(proof.slice(2), "hex");
+      // Pick a random uint256 element to corrupt (0-7)
+      const elementIndex = Math.floor(Math.random() * 8);
+      // Always pick the least significant byte (byte 31, since uint256 is big-endian in Solidity ABI)
+      const byteIndex = 0;
+      // Calculate the absolute byte position
+      const pos = elementIndex * 32 + byteIndex;
+      // Flip the least significant bit in that byte
+      // (this makes if very likely the field element will be < prime q and pass the other checks)
+      bad_proof_bytes[pos] ^= 0x1;
+
+      await expect(
+        // @ts-ignore
+        taonado_erc20.withdraw("0x" + bad_proof_bytes.toString("hex"), ...args)
+      ).to.be.reverted;
+
+      await expect(
+        // @ts-ignore
+        taonado_erc20.withdraw(proof, ...args)
+      ).to.not.be.reverted;
+    });
   });
 });
