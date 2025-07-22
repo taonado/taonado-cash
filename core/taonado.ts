@@ -8,6 +8,7 @@ import {
   DepositEvent,
   ERC20Taonado,
 } from "../typechain-types/core/ERC20Taonado";
+import { Deposit } from "./Deposit";
 import { bigInt } from "snarkjs";
 import crypto from "crypto";
 import { AddressLike } from "ethers";
@@ -167,10 +168,4 @@ export async function generateMerkleProof(
   return { pathElements, pathIndices, root: tree.root() };
 }
 
-export class Deposit {
-  secret?: bigint;
-  nullifier?: bigint;
-  preimage?: Buffer;
-  commitment?: bigint;
-  nullifierHash?: bigint;
-}
+export { Deposit } from "./Deposit";

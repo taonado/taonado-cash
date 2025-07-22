@@ -8,7 +8,7 @@ import {
   Deposit,
   toHex,
   generateSnarkProof,
-} from "../core/cli";
+} from "../core/taonado";
 
 const pool_token_amount = ethers.parseEther("1");
 const MERKLE_TREE_HEIGHT = 20;
