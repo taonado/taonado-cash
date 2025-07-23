@@ -48,6 +48,7 @@ function _createDeposit(nullifier: bigInt, secret: bigInt) {
   return deposit;
 }
 
+// format protocol-currency-amount-netId-note
 async function createNote(deposit: Deposit) {
   return `taonado-wtao-1-1337-${toHex(deposit.preimage, 62)}`;
 }

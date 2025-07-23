@@ -42,4 +42,23 @@ async function deposit(wallet: Wallet, amountToDeposit: bigint) {
   return receipt;
 }
 
+export async function depositQuiet(wallet: Wallet, amountToDeposit: bigint) {
+  let instance = await getWTAOContract();
+  if (!instance) {
+    console.warn("WTAO contract not found, please check env");
+    return {};
+  }
+  try {
+    const address = instance.target;
+    const contract = WTAO__factory.connect(address.toString(), wallet);
+    const tx = await contract.deposit({ value: amountToDeposit });
+    const receipt = await tx.wait();
+    const balance = await contract.balanceOf(wallet.address);
+    return { balance, tx, contract, receipt };
+  } catch (error) {
+    console.error("Error depositing TAO:", error);
+    return {};
+  }
+}
+
 export { deposit };
