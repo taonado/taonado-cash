@@ -70,7 +70,7 @@ class TaonadoCLI {
         message: "What operation would you like to perform?",
         choices: [
           {
-            name: "💰 Basic WTAO Operations",
+            name: "💰 WTAO Operations",
             value: "basic",
           },
           {
@@ -100,7 +100,7 @@ class TaonadoCLI {
   }
 
   async handleBasicOperations() {
-    console.log("\n💰 Basic WTAO Operations");
+    console.log("\n💰 WTAO Operations");
     console.log("========================\n");
 
     const { operation } = await inquirer.prompt([
@@ -110,16 +110,16 @@ class TaonadoCLI {
         message: "Choose an operation:",
         choices: [
           {
-            name: "📥 Deposit (TAO → WTAO)",
+            name: "👁️  View Balances",
+            value: "balance",
+          },
+          {
+            name: "📥 Wrap TAO (TAO → WTAO)",
             value: "deposit",
           },
           {
-            name: "📤 Withdraw (WTAO → TAO)",
+            name: "📤 Unwrap TAO (WTAO → TAO)",
             value: "withdraw",
-          },
-          {
-            name: "👁️  View Balances",
-            value: "balance",
           },
           { name: "🔙 Back to main menu", value: "back" },
         ],
@@ -153,7 +153,7 @@ class TaonadoCLI {
         message: "Choose an operation:",
         choices: [
           {
-            name: "🔒 Privacy Deposit (WTAO → Mixer)",
+            name: "🔒 Privacy Deposit (WTAO → Pool)",
             value: "privacy-deposit",
           },
           {
@@ -282,7 +282,7 @@ class TaonadoCLI {
   }
 
   async handlePrivacyDeposit() {
-    console.log("\n🔒 Privacy Deposit (WTAO → Mixer)");
+    console.log("\n🔒 Privacy Deposit (WTAO → Pool)");
     console.log("===================================\n");
     console.log(
       "⚠️  WARNING: You will receive a secret note. SAVE IT SECURELY!"
@@ -318,7 +318,7 @@ class TaonadoCLI {
       console.log("\n⏳ Processing privacy deposit...");
       console.log("   • Generating secret note...");
       console.log("   • Creating commitment...");
-      console.log("   • Submitting to mixer...\n");
+      console.log("   • Submitting to pool...\n");
 
       try {
         const note = await this.performPrivacyDeposit(amount);
