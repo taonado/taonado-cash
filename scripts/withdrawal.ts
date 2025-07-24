@@ -1,9 +1,9 @@
 import { ethers } from "hardhat";
 import { getWTAOContract } from "./contracts";
-import { config } from "../config";
 import { WTAO__factory } from "../typechain-types";
+import { Wallet } from "ethers";
 
-async function main() {
+export async function withdraw(wallet: Wallet, amountToWithdraw: bigint) {
   let instance = await getWTAOContract();
   if (!instance) {
     console.log("WTAO contract not found, please check env");
@@ -12,9 +12,6 @@ async function main() {
 
   const address = instance.target;
   console.log(`WTAO address: ${address}`);
-
-  // Get the wallet with provider
-  const wallet = new ethers.Wallet(config.ethPrivateKey, ethers.provider);
 
   // Create contract instance with proper typing
   const contract = WTAO__factory.connect(address.toString(), wallet);
@@ -27,8 +24,6 @@ async function main() {
   const symbol = await contract.symbol();
   console.log("Token symbol:", symbol);
 
-  // Withdraw 1 WTAO from the contract
-  const amountToWithdraw = ethers.parseEther("1.0");
   console.log(`Withdrawing ${ethers.formatEther(amountToWithdraw)} TAO...`);
 
   // Make the withdrawal
@@ -45,8 +40,3 @@ async function main() {
   const balance = await contract.balanceOf(wallet.address);
   console.log(`New WTAO balance: ${ethers.formatEther(balance)} WTAO`);
 }
-
-main().catch((error) => {
-  console.error(error);
-  process.exitCode = 1;
-});
