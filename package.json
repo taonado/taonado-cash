@@ -50,7 +50,14 @@
     "node-json-db": "^2.3.1",
     "solidity-coverage": "^0.8.13",
     "ts-node": "^10.9.2",
+    "tsx": "^4.20.3",
     "typechain": "^8.3.2",
     "typescript": "^5.3.3"
+  },
+  "bin": {
+    "tnd": "./cli.ts"
+  },
+  "dependencies": {
+    "commander": "^14.0.0"
   }
 }
