@@ -5,14 +5,18 @@ import {
   DepositTracker__factory,
   WeightsV2__factory,
   EvmValidator__factory,
+  ERC20Taonado__factory,
+  Verifier__factory,
 } from "../typechain-types";
 import { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signers";
 import { AddressLike, BigNumberish } from "ethers";
 import { Contracts } from "./contracts";
 import { IMetagraph_ADDRESS } from "../const";
 import { config } from "../config";
+import { deployHasher as _deployHasher } from "../tools/hasher";
 
-let deployer: HardhatEthersSigner | undefined;
+let deployer: HardhatEthersSigner;
+const pool_token_amount = ethers.parseEther("1");
 
 async function main() {
   try {
@@ -51,6 +55,16 @@ async function main() {
     await evmValidator.setSetWeightsBlockInterval(339);
     await evmValidator.setMetagraphBoostValue(256);
 
+    const hasher = await deployHasher();
+    const verifier = await deployVerifier();
+    const erc20taonado = await deployPrivacyPool(
+      verifier.target,
+      hasher.target,
+      pool_token_amount,
+      config.MERKLE_TREE_HEIGHT,
+      wtao.target
+    );
+
     console.log("Contracts deployed and configured successfully! 🌀");
 
     console.log("------ ENV VARS ------");
@@ -60,6 +74,74 @@ async function main() {
     console.error("Detailed error information:");
     console.error(error);
   }
+}
+
+async function deployPrivacyPool(
+  _verifier: AddressLike,
+  _hasher: AddressLike,
+  pool_token_amount: BigNumberish,
+  merkle_tree_height: BigNumberish,
+  _wtao: AddressLike
+) {
+  if (await contractExists(Contracts.ERC20TAONAO)) {
+    console.log("ERC20Taonado contract already exists");
+    const _erc20taonado = await getDeployedContract<typeof erc20taonado>(
+      Contracts.ERC20TAONAO
+    );
+    const contract = ERC20Taonado__factory.connect(
+      _erc20taonado.target.toString(),
+      deployer
+    );
+    return contract;
+  }
+
+  console.log("Deploying ERC20Taonado contract...");
+  const factory = await ethers.getContractFactory(Contracts.ERC20TAONAO);
+  const erc20taonado = await factory.deploy(
+    _verifier,
+    _hasher,
+    pool_token_amount,
+    merkle_tree_height,
+    _wtao
+  );
+  await erc20taonado.waitForDeployment();
+  console.log(`ERC20Taonado deployed to ${erc20taonado.target}`);
+
+  await storeContract<typeof erc20taonado>(Contracts.ERC20TAONAO, erc20taonado);
+  return erc20taonado;
+}
+
+async function deployHasher() {
+  if (await contractExists(Contracts.HASHER)) {
+    console.log("Hasher contract already exists");
+    const _hasher = await getDeployedContract<typeof hasher>(Contracts.HASHER);
+    return _hasher;
+  }
+  console.log("Deploying Hasher contract...");
+  const hasher = await _deployHasher(deployer);
+  await hasher.waitForDeployment();
+  console.log(`Hasher deployed to ${hasher.target}`);
+
+  await storeContract<typeof hasher>(Contracts.HASHER, hasher);
+  return hasher;
+}
+
+async function deployVerifier() {
+  if (await contractExists(Contracts.VERIFIER)) {
+    console.log("Verifier contract already exists");
+    const _verifier = await getDeployedContract<typeof verifier>(
+      Contracts.VERIFIER
+    );
+    return _verifier;
+  }
+  console.log("Deploying Verifier contract...");
+  const factory = await ethers.getContractFactory(Contracts.VERIFIER);
+  const verifier = await factory.deploy();
+  await verifier.waitForDeployment();
+  console.log(`Verifier deployed to ${verifier.target}`);
+
+  await storeContract<typeof verifier>(Contracts.VERIFIER, verifier);
+  return verifier;
 }
 
 async function deployEvmValidator(netuid: BigNumberish, _weights: AddressLike) {

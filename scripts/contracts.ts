@@ -5,6 +5,9 @@ enum Contracts {
   WTAO = "WTAO",
   DEPOSIT_TRACKER = "DepositTracker",
   WEIGHTS = "WeightsV2",
+  ERC20TAONAO = "ERC20Taonado",
+  HASHER = "Hasher",
+  VERIFIER = "Verifier",
 }
 
 async function getWTAOContract() {
