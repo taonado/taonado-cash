@@ -1,7 +1,8 @@
 import { loadFixture } from "@nomicfoundation/hardhat-toolbox/network-helpers";
 import { expect } from "chai";
 import { ethers } from "hardhat";
-import { compileHasher } from "../tools/hasher";
+import { deployHasher } from "../tools/hasher";
+import { config } from "../config";
 import {
   createDeposit,
   parseNote,
@@ -11,20 +12,12 @@ import {
 } from "../core/taonado";
 
 const pool_token_amount = ethers.parseEther("1");
-const MERKLE_TREE_HEIGHT = 20;
+const { MERKLE_TREE_HEIGHT } = config;
 
 describe("ERC20Taonado", function () {
   async function deployERC20Taonado() {
-    const hasherArtifact = await compileHasher(false);
-
-    // Deploy the precompiled Hasher contract directly
     const [deployer] = await ethers.getSigners();
-    const hasherFactory = new ethers.ContractFactory(
-      hasherArtifact.abi,
-      hasherArtifact.bytecode,
-      deployer
-    );
-    const hasher = await hasherFactory.deploy();
+    const hasher = await deployHasher(deployer);
 
     const verifier_factory = await ethers.getContractFactory("Verifier");
     const verifier = await verifier_factory.deploy();

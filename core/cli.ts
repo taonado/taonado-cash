@@ -297,11 +297,11 @@ class TaonadoCLI {
         name: "amount",
         message: "Select deposit amount (standard pool sizes):",
         choices: [
-          { name: "0.1 TAO", value: "0.1" },
+          { name: "0.1 TAO (coming soon)", value: "0.1", disabled: true },
           { name: "1 TAO", value: "1" },
-          { name: "10 TAO", value: "10" },
-          { name: "100 TAO", value: "100" },
-          { name: "1000 TAO", value: "1000" },
+          { name: "10 TAO (coming soon)", value: "10", disabled: true },
+          { name: "100 TAO (coming soon)", value: "100", disabled: true },
+          { name: "1000 TAO (coming soon)", value: "1000", disabled: true },
         ],
       });
       amount = amountAnswer.amount;
