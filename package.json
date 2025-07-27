@@ -56,13 +56,19 @@
     "node-json-db": "^2.3.1",
     "solidity-coverage": "^0.8.13",
     "ts-node": "^10.9.2",
+    "tsx": "^4.20.3",
     "typechain": "^8.3.2",
     "typescript": "^5.3.3"
   },
+  "bin": {
+    "miner": "./miner-cli.ts"
+  },
   "dependencies": {
+    "@polkadot/util": "13.5.1",
     "@types/inquirer": "^9.0.8",
     "circom": "^0.0.35",
     "circomlib": "git+https://github.com/tornadocash/circomlib.git#c372f14d324d57339c88451834bf2824e73bbdbc",
+    "commander": "^14.0.0",
     "fixed-merkle-tree": "^0.6.0",
     "inquirer": "^12.8.2",
     "snarkjs": "git+https://github.com/tornadocash/snarkjs.git#869181cfaf7526fe8972073d31655493a04326d5",
