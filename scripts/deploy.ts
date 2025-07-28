@@ -58,11 +58,11 @@ async function main() {
     const hasher = await deployHasher();
     const verifier = await deployVerifier();
     const erc20taonado = await deployPrivacyPool(
-      verifier.target,
-      hasher.target,
+      verifier.getAddress(),
+      hasher.getAddress(),
       pool_token_amount,
       config.MERKLE_TREE_HEIGHT,
-      wtao.target
+      wtao.getAddress()
     );
 
     console.log("Contracts deployed and configured successfully! 🌀");

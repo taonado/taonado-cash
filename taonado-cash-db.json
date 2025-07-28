@@ -2117,7 +2117,7 @@
     },
     "Hasher": {
         "testnet": {
-            "target": "0x80e8328a9b4de4772dBd670600515615b025689e",
+            "target": "0x1C4B0B07Ff8bA3Ba80fB48074dCD04b533D4A6d6",
             "interface": {
                 "fragments": [
                     {
@@ -2181,7 +2181,7 @@
     },
     "Verifier": {
         "testnet": {
-            "target": "0xB54F242AADf29d04f6F9716F993452d26577Bf49",
+            "target": "0x453187a19cBd10604eA0219E46ED2B8Cb55F3CD3",
             "interface": {
                 "fragments": [
                     {
@@ -2244,7 +2244,7 @@
     },
     "ERC20Taonado": {
         "testnet": {
-            "target": "0xEa66C87E4B1a3FD1Cefc418a3e3359bE606358e5",
+            "target": "0xD4752797b032e3522309B7CD518ae56D994e05c2",
             "interface": {
                 "fragments": [
                     {
