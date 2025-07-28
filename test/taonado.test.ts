@@ -49,11 +49,13 @@ describe("ERC20Taonado", function () {
       expect(deposit.commitment).to.not.be.undefined;
       expect(deposit.nullifier).to.not.be.undefined;
       expect(deposit.secret).to.not.be.undefined;
+      expect(deposit.nullifierHash).to.not.be.undefined;
 
       const parsedDeposit = parseNote(note);
       expect(parsedDeposit.commitment).to.equal(deposit.commitment);
       expect(parsedDeposit.nullifier).to.equal(deposit.nullifier);
       expect(parsedDeposit.secret).to.equal(deposit.secret);
+      expect(parsedDeposit.nullifierHash).to.equal(deposit.nullifierHash);
     });
 
     it("Should allow deposits & withdrawal (singular)", async function () {
