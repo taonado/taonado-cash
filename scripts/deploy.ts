@@ -83,10 +83,10 @@ async function deployPrivacyPool(
   merkle_tree_height: BigNumberish,
   _wtao: AddressLike
 ) {
-  if (await contractExists(Contracts.ERC20TAONAO)) {
+  if (await contractExists(Contracts.ERC20TAONADO)) {
     console.log("ERC20Taonado contract already exists");
     const _erc20taonado = await getDeployedContract<typeof erc20taonado>(
-      Contracts.ERC20TAONAO
+      Contracts.ERC20TAONADO
     );
     const contract = ERC20Taonado__factory.connect(
       _erc20taonado.target.toString(),
@@ -96,7 +96,7 @@ async function deployPrivacyPool(
   }
 
   console.log("Deploying ERC20Taonado contract...");
-  const factory = await ethers.getContractFactory(Contracts.ERC20TAONAO);
+  const factory = await ethers.getContractFactory(Contracts.ERC20TAONADO);
   const erc20taonado = await factory.deploy(
     _verifier,
     _hasher,
@@ -107,7 +107,10 @@ async function deployPrivacyPool(
   await erc20taonado.waitForDeployment();
   console.log(`ERC20Taonado deployed to ${erc20taonado.target}`);
 
-  await storeContract<typeof erc20taonado>(Contracts.ERC20TAONAO, erc20taonado);
+  await storeContract<typeof erc20taonado>(
+    Contracts.ERC20TAONADO,
+    erc20taonado
+  );
   return erc20taonado;
 }
 

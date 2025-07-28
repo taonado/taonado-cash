@@ -5,7 +5,7 @@ enum Contracts {
   WTAO = "WTAO",
   DEPOSIT_TRACKER = "DepositTracker",
   WEIGHTS = "WeightsV2",
-  ERC20TAONAO = "ERC20Taonado",
+  ERC20TAONADO = "ERC20Taonado",
   HASHER = "Hasher",
   VERIFIER = "Verifier",
 }
@@ -13,7 +13,7 @@ enum Contracts {
 async function getWTAOContract() {
   // Get deployed address
   if (!(await contractExists(Contracts.WTAO))) {
-    console.log("WTAO contract not found, please check env");
+    console.warn("WTAO contract not found, please check env");
     return;
   }
   let instance = await getDeployedContract(Contracts.WTAO);

@@ -4,7 +4,7 @@ import inquirer from "inquirer";
 import { logo } from "./logo";
 import { ethers } from "hardhat";
 import { config } from "../config";
-import { balances, wrapTAO, unwrapTAO } from "./ops";
+import { balances, wrapTAO, unwrapTAO, depositTAO, claimNote } from "./ops";
 
 const _CLI_VERSION = "0.1.0";
 
@@ -468,18 +468,14 @@ class TaonadoCLI {
   }
 
   async performPrivacyDeposit(amount: string): Promise<string> {
-    // TODO: Implement privacy deposit logic
-    // This should use core/taonado.ts createDeposit() and ERC20Taonado contract
-    console.log(`TODO: Implement privacy deposit of ${amount} WTAO`);
-    throw new Error("Privacy deposit not implemented yet");
-    // Should return the secret note string
+    const { note, tx } = await depositTAO(this.wallet, amount);
+    return note;
   }
 
   async performPrivacyWithdraw(note: string, recipient: string): Promise<void> {
-    // TODO: Implement privacy withdraw logic
-    // This should use core/taonado.ts parseNote(), generateSnarkProof(), and contract.withdraw()
-    console.log(`TODO: Implement privacy withdraw using note to ${recipient}`);
-    throw new Error("Privacy withdraw not implemented yet");
+    const tx = await claimNote(this.wallet, note, recipient);
+    console.log("✅ Privacy withdraw completed successfully!");
+    console.log("🎉 Your funds have been anonymously transferred!");
   }
 }
 
