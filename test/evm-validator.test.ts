@@ -9,21 +9,22 @@ import { mockNeuron } from "./mock/neuron.mock";
 import { BigNumberish } from "ethers";
 import { randomBytes } from "crypto";
 import { upgrades } from "hardhat";
-import hre from "hardhat";
 
-// ✅ Typechain-generated types
-import type { 
-  WTAO, 
-  DepositTracker, 
-  WeightsV2, 
-  EvmValidator, 
-  MockMetagraph, 
-  MockNeuron 
+import type {
+  WTAO,
+  DepositTracker,
+  WeightsV2,
+  EvmValidator,
+  MockMetagraph,
+  MockNeuron,
 } from "../typechain-types";
 
-describe("EvmValidator", function () {
-  console.log("Running tests on network:", hre.network.name);
+//predicate for chai.emit.withArgs()
+function gtZero(value: bigint): boolean {
+  return value > 0;
+}
 
+describe("EvmValidator", function () {
   const sn_sudo_pk: string = "0x69";
   const version_key: string = "0x00";
   const netuid: BigNumberish = "0x99"; // 🌪️
@@ -39,11 +40,14 @@ describe("EvmValidator", function () {
     // Deploy WTAO
     const WTAOFactory = await ethers.getContractFactory("WTAO");
     const wtao = (await WTAOFactory.deploy()) as unknown as WTAO;
-  
+
     // Deploy DepositTracker
-    const DepositTrackerFactory = await ethers.getContractFactory("DepositTracker");
-    const depositTracker = (await DepositTrackerFactory.deploy()) as unknown as DepositTracker;
-  
+    const DepositTrackerFactory = await ethers.getContractFactory(
+      "DepositTracker"
+    );
+    const depositTracker =
+      (await DepositTrackerFactory.deploy()) as unknown as DepositTracker;
+
     // Deploy MockMetagraph
     const metagraph = (await mockMetagraph()) as unknown as MockMetagraph;
     await metagraph.setHotkey(
@@ -51,10 +55,10 @@ describe("EvmValidator", function () {
       0,
       ethers.encodeBytes32String(sn_sudo_pk)
     );
-  
+
     // Deploy MockNeuron
     const neuron = (await mockNeuron()) as unknown as MockNeuron;
-  
+
     // Deploy WeightsV2
     const WeightsFactory = await ethers.getContractFactory("WeightsV2");
     const weights = (await WeightsFactory.deploy(
@@ -63,22 +67,19 @@ describe("EvmValidator", function () {
       await metagraph.getAddress(),
       await wtao.getAddress()
     )) as unknown as WeightsV2;
-  
+
     await weights.setDepositGoal(ethers.parseEther("1000"));
-  
+
     // Deploy EvmValidator
     const EvmValidatorFactory = await ethers.getContractFactory("EvmValidator");
     const evmValidator = (await upgrades.deployProxy(
       EvmValidatorFactory,
-      [
-        netuid,
-        await weights.getAddress(),
-      ],
+      [netuid, await weights.getAddress()],
       {
         initializer: "initialize",
       }
     )) as unknown as EvmValidator;
-  
+
     // Get signers
     const [owner, addr1, addr2] = await ethers.getSigners();
 
@@ -106,7 +107,7 @@ describe("EvmValidator", function () {
         wtao,
         weights,
         neuron,
-        owner
+        owner,
       } = await loadFixture(deployFixture);
 
       // Fund contract
@@ -190,39 +191,14 @@ describe("EvmValidator", function () {
 
       const balanceBefore = await ethers.provider.getBalance(addr1.address);
 
-      const tx = await evmValidator
-        .connect(addr1)
-        .setWeights(ethers.encodeBytes32String("0x0"));
-      const receipt = await tx.wait();
-      // Find the BountyPaid event in the logs
-      let event = null;
-      if (receipt && receipt.logs) {
-        for (const log of receipt.logs) {
-          try {
-            const parsed = evmValidator.interface.parseLog(log);
-            if (parsed && parsed.name === "BountyPaid") {
-              event = parsed;
-              break;
-            }
-          } catch (e) {
-            // Not all logs are from this contract, ignore parse errors
-          }
-        }
-      }
+      await expect(
+        evmValidator
+          .connect(addr1)
+          .setWeights(ethers.encodeBytes32String("0x0"))
+      )
+        .to.emit(evmValidator, "BountyPaid")
+        .withArgs(addr1.address, gtZero, gtZero, gtZero);
 
-      if (event) {
-        // console.log("BountyPaid event:", {
-        //   who: event.args?.who,
-        //   gasUsedByCall: event.args?.gasUsedByCall,
-        //   TAORefunded: ethers.formatEther(event.args?.weiRefunded),
-        //   gasUsedByBookkeeping: event.args?.gasUsedByBookkeeping,
-        // });
-        // You can also add assertions here:
-        expect(event.args?.who).to.equal(addr1.address);
-        expect(event.args?.weiRefunded).to.be.gt(0);
-      } else {
-        console.log("BountyPaid event not found!");
-      }
       const balanceAfter = await ethers.provider.getBalance(addr1.address);
 
       // because evmValidator pays bounty and refunds gas, we expect
@@ -245,11 +221,13 @@ describe("EvmValidator", function () {
     });
 
     it("should revert if contract balance is insufficient for refund", async function () {
-        const { evmValidator, addr1 } = await loadFixture(deployFixture);
+      const { evmValidator, addr1 } = await loadFixture(deployFixture);
 
-        await expect(
-            evmValidator.connect(addr1).setWeights(ethers.encodeBytes32String("0x0"))
-        ).to.be.revertedWith("Insufficient balance, contact the owner");
+      await expect(
+        evmValidator
+          .connect(addr1)
+          .setWeights(ethers.encodeBytes32String("0x0"))
+      ).to.be.revertedWith("Insufficient balance, contact the owner");
     });
 
     it("should boost weights for running setWeights", async function () {
@@ -257,7 +235,6 @@ describe("EvmValidator", function () {
         evmValidator,
         depositTracker,
         addr1,
-        addr2,
         owner,
         metagraph,
         wtao,
@@ -301,7 +278,7 @@ describe("EvmValidator", function () {
       expect(setWeights[3]).to.equal(version_key);
     });
 
-    it("should enforce block interval for mienrs", async function () {
+    it("should enforce block interval for miners", async function () {
       const { evmValidator, addr1, owner } = await loadFixture(deployFixture);
 
       // Fund contract
@@ -517,16 +494,25 @@ describe("EvmValidator", function () {
       const { evmValidator, owner } = await loadFixture(deployFixture);
 
       // Set a value in the original contract
-      await evmValidator.connect(owner).setSetWeightsBounty(ethers.parseEther("1"));
-      expect(await evmValidator.setWeightsBounty()).to.equal(ethers.parseEther("1"));
+      await evmValidator
+        .connect(owner)
+        .setSetWeightsBounty(ethers.parseEther("1"));
+      expect(await evmValidator.setWeightsBounty()).to.equal(
+        ethers.parseEther("1")
+      );
 
       // Deploy a new version of the contract
       const EvmValidatorV2 = await ethers.getContractFactory("EvmValidatorV2");
       // Upgrade the proxy to the new implementation
-      const upgraded = await upgrades.upgradeProxy(await evmValidator.getAddress(), EvmValidatorV2);
+      const upgraded = await upgrades.upgradeProxy(
+        await evmValidator.getAddress(),
+        EvmValidatorV2
+      );
 
       // Check that the state is preserved
-      expect(await upgraded.setWeightsBounty()).to.equal(ethers.parseEther("1"));
+      expect(await upgraded.setWeightsBounty()).to.equal(
+        ethers.parseEther("1")
+      );
 
       // Check new functionality (assume V2 adds a function called newFunction)
       expect(await upgraded.newFunction()).to.equal("V2 works!");
