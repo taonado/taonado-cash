@@ -1,6 +1,6 @@
-import { HardhatUserConfig } from "hardhat/config";
 import "@nomicfoundation/hardhat-toolbox";
 import "@nomicfoundation/hardhat-verify";
+import { HardhatUserConfig } from "hardhat/config";
 import { config } from "./config";
 
 const hardhatConfig: HardhatUserConfig = {
@@ -17,6 +17,11 @@ const hardhatConfig: HardhatUserConfig = {
     },
     local: {
       url: "http://127.0.0.1:9944",
+      accounts: [config.ethPrivateKey],
+    },
+    "substrate-local": {
+      url: "http://127.0.0.1:9944",
+      chainId: 964,
       accounts: [config.ethPrivateKey],
     },
     // for contract verification

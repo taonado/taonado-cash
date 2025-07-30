@@ -73,11 +73,14 @@ library Pairing {
 
         // solium-disable-next-line security/no-inline-assembly
         assembly {
-            success := staticcall(sub(gas(), 2000), 6, input, 0xc0, r, 0x60)
-            // Use "invalid" to make gas estimation work
+            success := staticcall(sub(gas(), 2000), 9, input, 0xc0, r, 0x60)
+            // Use revert for substrate compat
             switch success
             case 0 {
-                invalid()
+                // Store 0x01 in scratch space and revert with it
+                mstore(0x00, 0x01)
+                // 0x01 here is the size of the error message (one byte)
+                revert(0x00, 0x01)
             }
         }
 
@@ -101,10 +104,13 @@ library Pairing {
         // solium-disable-next-line security/no-inline-assembly
         assembly {
             success := staticcall(sub(gas(), 2000), 7, input, 0x80, r, 0x60)
-            // Use "invalid" to make gas estimation work
+            // Use revert for substrate compat
             switch success
             case 0 {
-                invalid()
+                // Store 0x02 in scratch space and revert with it
+                mstore(0x00, 0x02)
+                // 0x01 here is the size of the error message (one byte)
+                revert(0x00, 0x01)
             }
         }
         require(success, "pairing-mul-failed");
@@ -154,10 +160,13 @@ library Pairing {
                 out,
                 0x20
             )
-            // Use "invalid" to make gas estimation work
+            // Use revert for substrate compat
             switch success
             case 0 {
-                invalid()
+                // Store 0x03 in scratch space and revert with it
+                mstore(0x00, 0x03)
+                // 0x01 here is the size of the error message (one byte)
+                revert(0x00, 0x01)
             }
         }
 
