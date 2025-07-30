@@ -78,7 +78,7 @@ library Pairing {
             switch success
             case 0 {
                 // Store 0x01 in scratch space and revert with it
-                mstore(0x00, 0x01)
+                mstore8(0x00, 0x01)
                 // 0x01 here is the size of the error message (one byte)
                 revert(0x00, 0x01)
             }
@@ -108,7 +108,7 @@ library Pairing {
             switch success
             case 0 {
                 // Store 0x02 in scratch space and revert with it
-                mstore(0x00, 0x02)
+                mstore8(0x00, 0x02)
                 // 0x01 here is the size of the error message (one byte)
                 revert(0x00, 0x01)
             }
@@ -164,7 +164,7 @@ library Pairing {
             switch success
             case 0 {
                 // Store 0x03 in scratch space and revert with it
-                mstore(0x00, 0x03)
+                mstore8(0x00, 0x03)
                 // 0x01 here is the size of the error message (one byte)
                 revert(0x00, 0x01)
             }
