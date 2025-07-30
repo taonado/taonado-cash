@@ -502,11 +502,13 @@ describe("EvmValidator", function () {
       );
 
       // Deploy a new version of the contract
-      const EvmValidatorV2 = await ethers.getContractFactory("EvmValidatorV2");
+      const MockUpgradedEvmValidator = await ethers.getContractFactory(
+        "MockUpgradedEvmValidator"
+      );
       // Upgrade the proxy to the new implementation
       const upgraded = await upgrades.upgradeProxy(
         await evmValidator.getAddress(),
-        EvmValidatorV2
+        MockUpgradedEvmValidator
       );
 
       // Check that the state is preserved
