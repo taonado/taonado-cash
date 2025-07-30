@@ -3,8 +3,11 @@
   "version": "1.0.0",
   "description": "A Privacy Preserving TAO Mixer on Bittensor",
   "scripts": {
-    "build": "hardhat compile",
+    "build:contract:compile": "hardhat compile --no-typechain && npm run generate-types",
+    "build:circuit:compile": "circom circuits/withdraw.circom -o artifacts/circuits/withdraw.json && pnpm snarkjs info -c artifacts/circuits/withdraw.json",
+    "build:circuit": "mkdir -p artifacts/circuits && pnpm build:circuit:compile",
     "deploy": "hardhat run scripts/deploy.ts",
+    "compile": "hardhat compile --no-typechain && npm run generate-types",
     "deploy-local": "hardhat run scripts/deploy.ts --network local",
     "deploy-testnet": "hardhat run scripts/deploy.ts --network subevm",
     "test": "REPORT_GAS=true hardhat test --network hardhat",
@@ -25,7 +28,10 @@
     "balance-testnet": "hardhat run scripts/get-balance.ts --network subevm",
     "transfer": "hardhat run scripts/transfer.ts",
     "transfer-local": "hardhat run scripts/transfer.ts --network local",
-    "transfer-testnet": "hardhat run scripts/transfer.ts --network subevm"
+    "transfer-testnet": "hardhat run scripts/transfer.ts --network subevm",
+    "generate-types": "ts-node tools/generate-types.ts",
+    "download-keys": "ts-node tools/download-keys.ts",
+    "cli": "hardhat run core/cli.ts --network subevm"
   },
   "license": "MIT",
   "devDependencies": {
@@ -43,6 +49,7 @@
     "@types/chai": "^4.3.19",
     "@types/mocha": "^10.0.7",
     "@types/node": "^22.5.4",
+    "axios": "^1.11.0",
     "chai": "^4.2.0",
     "ethers": "^6.13.2",
     "hardhat": "^2.19.4",
@@ -52,5 +59,15 @@
     "ts-node": "^10.9.2",
     "typechain": "^8.3.2",
     "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "@types/inquirer": "^9.0.8",
+    "circom": "^0.0.35",
+    "circomlib": "git+https://github.com/tornadocash/circomlib.git#c372f14d324d57339c88451834bf2824e73bbdbc",
+    "fixed-merkle-tree": "^0.6.0",
+    "glob": "^11.0.3",
+    "inquirer": "^12.8.2",
+    "snarkjs": "git+https://github.com/tornadocash/snarkjs.git#869181cfaf7526fe8972073d31655493a04326d5",
+    "websnark": "git+https://github.com/tornadocash/websnark.git#4c0af6a8b65aabea3c09f377f63c44e7a58afa6d"
   }
 }

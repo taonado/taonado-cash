@@ -2,11 +2,12 @@ import { ethers } from "hardhat";
 import { getWTAOContract } from "./contracts";
 import { config } from "../config";
 import { WTAO__factory } from "../typechain-types";
+import { Wallet } from "ethers";
 
 async function main() {
   let instance = await getWTAOContract();
   if (!instance) {
-    console.log("WTAO contract not found, please check env");
+    console.warn("WTAO contract not found, please check env");
     return;
   }
 
@@ -46,7 +47,35 @@ async function main() {
   console.log(`New WTAO balance: ${ethers.formatEther(balance)} WTAO`);
 }
 
-main().catch((error) => {
-  console.error(error);
-  process.exitCode = 1;
-});
+export async function withdrawQuiet(wallet: Wallet, amount: bigint) {
+  let instance = await getWTAOContract();
+  if (!instance) {
+    console.warn("WTAO contract not found, please check env");
+    return {};
+  }
+
+  const address = instance.target;
+
+  // Create contract instance with proper typing
+  const contract = WTAO__factory.connect(address.toString(), wallet);
+
+  // Make the withdrawal
+  const tx = await contract.withdraw(amount);
+
+  // Wait for the transaction to be mined
+  const receipt = await tx.wait();
+
+  // Get the updated balance
+  const wtaoBalance = await contract.balanceOf(wallet.address);
+  const taoBalance = await ethers.provider.getBalance(wallet.address);
+
+  return { wtaoBalance, taoBalance, tx, contract, receipt };
+}
+
+// Only run main() if this file is executed directly
+if (require.main === module) {
+  main().catch((error) => {
+    console.error(error);
+    process.exitCode = 1;
+  });
+}

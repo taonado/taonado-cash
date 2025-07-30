@@ -6,12 +6,12 @@ import { AddressLike, Wallet } from "ethers";
 async function getWTAOBalance(wallet: Wallet) {
   let instance = await getWTAOContract();
   if (!instance) {
-    console.log("WTAO contract not found, please check env");
+    console.warn("WTAO contract not found, please check env");
     return;
   }
 
   const address = instance.target;
-  console.log(`WTAO address: ${address}`);
+  console.debug(`WTAO address: ${address}`);
 
   // Create contract instance with proper typing
   const contract = WTAO__factory.connect(address.toString(), wallet);
