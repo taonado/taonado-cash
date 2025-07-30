@@ -9,6 +9,7 @@
     "deploy": "hardhat run scripts/deploy.ts",
     "compile": "hardhat compile --no-typechain && npm run generate-types",
     "deploy-local": "hardhat run scripts/deploy.ts --network local",
+    "deploy-local-substrate": "hardhat run scripts/deploy.ts --network substrate-local",
     "deploy-testnet": "hardhat run scripts/deploy.ts --network subevm",
     "test": "REPORT_GAS=true hardhat test --network hardhat",
     "miner": "hardhat run scripts/miner.ts",
@@ -31,7 +32,10 @@
     "transfer-testnet": "hardhat run scripts/transfer.ts --network subevm",
     "generate-types": "ts-node tools/generate-types.ts",
     "download-keys": "ts-node tools/download-keys.ts",
-    "cli": "hardhat run core/cli.ts --network subevm"
+    "cli-local": "hardhat run core/cli.ts --network local",
+    "cli-local-substrate": "hardhat run core/cli.ts --network substrate-local",
+    "cli-testnet": "hardhat run core/cli.ts --network subevm",
+    "cli": "hardhat run core/cli.ts --network mainnet"
   },
   "license": "MIT",
   "devDependencies": {
