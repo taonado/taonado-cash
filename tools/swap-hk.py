@@ -15,14 +15,15 @@ import fire
 # Example Usage:
 # python swap-hk.py --wallet_name "my_wallet" --hotkey_name "my_hotkey" --destination_hotkey "5DJ...bCF"
 
-async def __main__(wallet_name: str, hotkey_name: str, destination_hotkey: str):
-    wallet = bt.wallet(name=wallet_name, hotkey=hotkey_name)
-    subtensor = bt.subtensor(network="finney")
+async def __main__(wallet_name: str, hotkey: str, destination_hotkey: str, netuid: int = 347, network: str = "finney"):
+    wallet = bt.wallet(name=wallet_name)
+    subtensor = bt.subtensor(network)
     call = subtensor.substrate.compose_call(
         call_module="SubtensorModule",
         call_function="swap_hotkey",
         call_params={
-            "hotkey": wallet.hotkey.ss58_address,
+            "netuid": netuid,
+            "hotkey": hotkey,
             "new_hotkey": destination_hotkey,
         },
     )
