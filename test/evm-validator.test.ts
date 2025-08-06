@@ -490,7 +490,7 @@ describe("EvmValidator", function () {
   });
 
   describe("Upgradability", function () {
-    it("should upgrade EvmValidator and preserve state", async function () {
+    it("should upgrade EvmValidator and preserve state & balance", async function () {
       const { evmValidator, owner } = await loadFixture(deployFixture);
 
       // Set a value in the original contract
@@ -499,6 +499,15 @@ describe("EvmValidator", function () {
         .setSetWeightsBounty(ethers.parseEther("1"));
       expect(await evmValidator.setWeightsBounty()).to.equal(
         ethers.parseEther("1")
+      );
+
+      await owner.sendTransaction({
+        to: evmValidator.getAddress(),
+        value: ethers.parseEther("10"),
+      });
+
+      const balanceBefore = await ethers.provider.getBalance(
+        evmValidator.getAddress()
       );
 
       // Deploy a new version of the contract
@@ -516,8 +525,21 @@ describe("EvmValidator", function () {
         ethers.parseEther("1")
       );
 
+      await mine(1);
+
+      expect(
+        await ethers.provider.getBalance(evmValidator.getAddress()),
+        "balance should be the same"
+      ).to.equal(balanceBefore);
+
       // Check new functionality (assume V2 adds a function called newFunction)
       expect(await upgraded.newFunction()).to.equal("V2 works!");
+
+      // chceck the funds can be rescued from the new contract, post upgrade
+      expect(await upgraded.rescueFunds()).to.changeEtherBalances(
+        [owner, upgraded],
+        [ethers.parseEther("10"), ethers.parseEther("10")]
+      );
     });
   });
 });
