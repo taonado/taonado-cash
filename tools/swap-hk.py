@@ -13,9 +13,9 @@ import fire
 # Yes I tried to hack it before hand but it's not possible. (don't modify hotkey files directly, it won't work)
 
 # Example Usage:
-# python swap-hk.py --wallet_name "my_wallet" --hotkey_name "my_hotkey" --destination_hotkey "5DJ...bCF"
+# python swap-hk.py --wallet_name "my_wallet" --hotkey "5DJ...bCF" --destination_hotkey "5DJ...bCF"
 
-async def __main__(wallet_name: str, hotkey: str, destination_hotkey: str, netuid: int = 347, network: str = "finney"):
+async def __main__(wallet_name: str, hotkey: str, destination_hotkey: str, netuid: int = 113, network: str = "finney"):
     wallet = bt.wallet(name=wallet_name)
     subtensor = bt.subtensor(network)
     call = subtensor.substrate.compose_call(
