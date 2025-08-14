@@ -30,6 +30,8 @@
 
 pragma solidity ^0.8.0;
 
+import "./VerifierConfig.sol";
+
 library Pairing {
     uint256 constant PRIME_Q =
         21888242871839275222246405745257275088696311157297823662689037894645226208583;
@@ -71,13 +73,26 @@ library Pairing {
         input[3] = p2.Y;
         bool success;
 
+        uint256 precompileAddr = VerifierConfig.BN128_ADD_PRECOMPILE_ADDRESS;
+
         // solium-disable-next-line security/no-inline-assembly
         assembly {
-            success := staticcall(sub(gas(), 2000), 6, input, 0xc0, r, 0x60)
-            // Use "invalid" to make gas estimation work
+            // Use compile-time determined precompile address - zero runtime overhead!
+            success := staticcall(
+                sub(gas(), 2000),
+                precompileAddr,
+                input,
+                0xc0,
+                r,
+                0x60
+            )
+            // Use revert for substrate compat
             switch success
             case 0 {
-                invalid()
+                // Store 0x01 in scratch space and revert with it
+                mstore8(0x00, 0x01)
+                // 0x01 here is the size of the error message (one byte)
+                revert(0x00, 0x01)
             }
         }
 
@@ -101,10 +116,13 @@ library Pairing {
         // solium-disable-next-line security/no-inline-assembly
         assembly {
             success := staticcall(sub(gas(), 2000), 7, input, 0x80, r, 0x60)
-            // Use "invalid" to make gas estimation work
+            // Use revert for substrate compat
             switch success
             case 0 {
-                invalid()
+                // Store 0x02 in scratch space and revert with it
+                mstore8(0x00, 0x02)
+                // 0x01 here is the size of the error message (one byte)
+                revert(0x00, 0x01)
             }
         }
         require(success, "pairing-mul-failed");
@@ -154,10 +172,13 @@ library Pairing {
                 out,
                 0x20
             )
-            // Use "invalid" to make gas estimation work
+            // Use revert for substrate compat
             switch success
             case 0 {
-                invalid()
+                // Store 0x03 in scratch space and revert with it
+                mstore8(0x00, 0x03)
+                // 0x01 here is the size of the error message (one byte)
+                revert(0x00, 0x01)
             }
         }
 

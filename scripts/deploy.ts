@@ -1,4 +1,4 @@
-import { ethers } from "hardhat";
+import { ethers, upgrades } from "hardhat";
 import { storeContract, contractExists, getDeployedContract } from "./store";
 import {
   WTAO__factory,
@@ -14,6 +14,11 @@ import { Contracts } from "./contracts";
 import { IMetagraph_ADDRESS } from "../const";
 import { config } from "../config";
 import { deployHasher as _deployHasher } from "../tools/hasher";
+import {
+  getVerifierVariant,
+  getVerifierContractName,
+} from "../tools/compile-variants";
+import { configureVerifierForNetwork } from "../tools/configure-verifier";
 
 let deployer: HardhatEthersSigner;
 const pool_token_amount = ethers.parseEther("1");
@@ -26,6 +31,15 @@ async function main() {
     const network = await ethers.provider.getNetwork();
     console.log(
       `Deploying to network: ${network.name} (chain ID: ${network.chainId})`
+    );
+
+    // Configure verifier for this network at compile-time
+    configureVerifierForNetwork(hre);
+
+    // Determine verifier variant for this network
+    const verifierVariant = getVerifierVariant(hre);
+    console.log(
+      `Configured Verifier contract for ${verifierVariant.description}`
     );
 
     // Check account balance
@@ -51,7 +65,7 @@ async function main() {
       weights.target
     );
 
-    await evmValidator.setSetWeightsBounty(ethers.parseEther("0.01"));
+    // await evmValidator.setSetWeightsBounty(ethers.parseEther("0.01"));
     await evmValidator.setSetWeightsBlockInterval(339);
     await evmValidator.setMetagraphBoostValue(256);
 
@@ -160,12 +174,16 @@ async function deployEvmValidator(netuid: BigNumberish, _weights: AddressLike) {
     return contract;
   }
 
-  console.log("Deploying EVMValidator contract...");
+  console.log("Deploying upgradeable EVMValidator contract...");
   const factory = await ethers.getContractFactory(Contracts.EVM_VALIDATOR);
-  const evmValidator = await factory.deploy(netuid, _weights);
+
+  // Use upgrades.deployProxy for upgradable contract
+  const evmValidator = await upgrades.deployProxy(factory, [netuid, _weights], {
+    initializer: "initialize",
+  });
 
   await evmValidator.waitForDeployment();
-  console.log(`EVMValidator deployed to ${evmValidator.target}`);
+  console.log(`EVMValidator (proxy) deployed to ${evmValidator.target}`);
 
   await storeContract<typeof evmValidator>(
     Contracts.EVM_VALIDATOR,

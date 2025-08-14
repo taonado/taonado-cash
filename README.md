@@ -199,6 +199,8 @@ The only thing we do know:
   - Unfortunately there is no way to set the association through the EVM, defeating it's purpose.
 Since there is no SDK currently any miner/vali would have to use the polkdot web UI which is a blocker - many (if not most) will not have their coldkey in a browser compatible wallet
 Maybe one day :)
+- Why are the EVM precompile addresses for BN128 different from the original contracts?
+  - Unfortunately the BN128 precompiles were not included in the original EVM release and were added later in a different order than on ethereum.
 
 ## Contract Verification
 To verify the source code for a deployed contract on the taostats evm explorer. See [hardhat.config.ts](./hardhat.config.ts) for configuration. This does not require a valid config.ts setup with keys etc..
