@@ -19,4 +19,3 @@ task("reset-verifier", "Reset verifier to default configuration").setAction(
     restoreDefaultConfig();
   }
 );
-

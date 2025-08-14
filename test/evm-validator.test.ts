@@ -8,6 +8,21 @@ import { mockMetagraph } from "./mock/metagraph.mock";
 import { mockNeuron } from "./mock/neuron.mock";
 import { BigNumberish } from "ethers";
 import { randomBytes } from "crypto";
+import { upgrades } from "hardhat";
+
+import type {
+  WTAO,
+  DepositTracker,
+  WeightsV2,
+  EvmValidator,
+  MockMetagraph,
+  MockNeuron,
+} from "../typechain-types";
+
+//predicate for chai.emit.withArgs()
+function gtZero(value: bigint): boolean {
+  return value > 0;
+}
 
 describe("EvmValidator", function () {
   const sn_sudo_pk: string = "0x69";
@@ -23,41 +38,49 @@ describe("EvmValidator", function () {
 
   async function deployFixture() {
     // Deploy WTAO
-    const WTAO = await ethers.getContractFactory("WTAO");
-    const wtao = await WTAO.deploy();
+    const WTAOFactory = await ethers.getContractFactory("WTAO");
+    const wtao = (await WTAOFactory.deploy()) as unknown as WTAO;
 
     // Deploy DepositTracker
-    const depositTracker = await deployTracker();
+    const DepositTrackerFactory = await ethers.getContractFactory(
+      "DepositTracker"
+    );
+    const depositTracker =
+      (await DepositTrackerFactory.deploy()) as unknown as DepositTracker;
 
     // Deploy MockMetagraph
-    const metagraph = await mockMetagraph();
-    //setup owner mock hotkey
+    const metagraph = (await mockMetagraph()) as unknown as MockMetagraph;
     await metagraph.setHotkey(
       netuid,
       0,
       ethers.encodeBytes32String(sn_sudo_pk)
     );
 
-    const neuron = await mockNeuron();
+    // Deploy MockNeuron
+    const neuron = (await mockNeuron()) as unknown as MockNeuron;
 
     // Deploy WeightsV2
-    const Weights = await ethers.getContractFactory("WeightsV2");
-    const weights = await Weights.deploy(
+    const WeightsFactory = await ethers.getContractFactory("WeightsV2");
+    const weights = (await WeightsFactory.deploy(
       netuid,
       await depositTracker.getAddress(),
       await metagraph.getAddress(),
       await wtao.getAddress()
-    );
+    )) as unknown as WeightsV2;
 
     await weights.setDepositGoal(ethers.parseEther("1000"));
 
-    const EvmValidator = await ethers.getContractFactory("EvmValidator");
-    const evmValidator = await EvmValidator.deploy(
-      netuid,
-      await weights.getAddress()
-    );
+    // Deploy EvmValidator
+    const EvmValidatorFactory = await ethers.getContractFactory("EvmValidator");
+    const evmValidator = (await upgrades.deployProxy(
+      EvmValidatorFactory,
+      [netuid, await weights.getAddress()],
+      {
+        initializer: "initialize",
+      }
+    )) as unknown as EvmValidator;
 
-    // Get signers for testing
+    // Get signers
     const [owner, addr1, addr2] = await ethers.getSigners();
 
     return {
@@ -84,7 +107,14 @@ describe("EvmValidator", function () {
         wtao,
         weights,
         neuron,
+        owner,
       } = await loadFixture(deployFixture);
+
+      // Fund contract
+      await owner.sendTransaction({
+        to: evmValidator.getAddress(),
+        value: ethers.parseEther("10"),
+      });
 
       const [miner1, miner2] = [randomBytes(32), randomBytes(32)];
       await metagraph.setHotkey(netuid, 1, miner1);
@@ -125,12 +155,11 @@ describe("EvmValidator", function () {
       expect(setWeights[3]).to.equal(version_key);
     });
 
-    it("should pay bounty for running setWeights", async function () {
+    it("should pay bounty and refund gas for running setWeights", async function () {
       const {
         evmValidator,
         depositTracker,
         addr1,
-        addr2,
         owner,
         metagraph,
         wtao,
@@ -138,42 +167,67 @@ describe("EvmValidator", function () {
         neuron,
       } = await loadFixture(deployFixture);
 
+      // Fund contract
       await owner.sendTransaction({
         to: evmValidator.getAddress(),
         value: ethers.parseEther("10"),
       });
-      await evmValidator
-        .connect(owner)
-        .setSetWeightsBounty(ethers.parseEther("1"));
+
+      const bounty = ethers.parseEther("0");
+      await evmValidator.connect(owner).setSetWeightsBounty(bounty);
 
       const [miner1, miner2] = [randomBytes(32), randomBytes(32)];
       await metagraph.setHotkey(netuid, 1, miner1);
       await metagraph.setHotkey(netuid, 2, miner2);
 
       await depositTracker.connect(addr1).associate(miner1);
-
       await wtao.connect(addr1).deposit({ value: ethers.parseEther("1") });
-      let normalizedWeights = await weights.getNormalizedWeights();
+
+      // Fund addr1 for gas
+      await owner.sendTransaction({
+        to: addr1.address,
+        value: ethers.parseEther("1"),
+      });
 
       const balanceBefore = await ethers.provider.getBalance(addr1.address);
 
-      await evmValidator
-        .connect(addr1)
-        .setWeights(ethers.encodeBytes32String("0x0"));
+      await expect(
+        evmValidator
+          .connect(addr1)
+          .setWeights(ethers.encodeBytes32String("0x0"))
+      )
+        .to.emit(evmValidator, "BountyPaid")
+        .withArgs(addr1.address, gtZero, gtZero, gtZero);
 
       const balanceAfter = await ethers.provider.getBalance(addr1.address);
+
+      // because evmValidator pays bounty and refunds gas, we expect
+      // the balance to increase by the bounty
+      const expectedDiff = bounty;
+
       expect(balanceAfter - balanceBefore).to.be.approximately(
-        ethers.parseEther("1"),
-        ethers.parseEther("0.001") // enough for the gas difference
+        expectedDiff,
+        ethers.parseEther("0.0001") // tighter margin for accuracy
       );
 
       let setWeights = await neuron.getLastSetWeights();
 
-      // shoudn't change weights
+      // weights should match
+      let normalizedWeights = await weights.getNormalizedWeights();
       expect(setWeights[0]).to.equal(netuid);
       expect(setWeights[1]).to.deep.equal(normalizedWeights[0]);
       expect(setWeights[2]).to.deep.equal(normalizedWeights[1]);
       expect(setWeights[3]).to.equal(version_key);
+    });
+
+    it("should revert if contract balance is insufficient for refund", async function () {
+      const { evmValidator, addr1 } = await loadFixture(deployFixture);
+
+      await expect(
+        evmValidator
+          .connect(addr1)
+          .setWeights(ethers.encodeBytes32String("0x0"))
+      ).to.be.revertedWith("Insufficient balance, contact the owner");
     });
 
     it("should boost weights for running setWeights", async function () {
@@ -181,13 +235,18 @@ describe("EvmValidator", function () {
         evmValidator,
         depositTracker,
         addr1,
-        addr2,
         owner,
         metagraph,
         wtao,
         weights,
         neuron,
       } = await loadFixture(deployFixture);
+
+      // Fund contract
+      await owner.sendTransaction({
+        to: evmValidator.getAddress(),
+        value: ethers.parseEther("10"),
+      });
 
       const metagraphBoostValue = BigInt(250);
 
@@ -219,8 +278,14 @@ describe("EvmValidator", function () {
       expect(setWeights[3]).to.equal(version_key);
     });
 
-    it("should enforce block interval for mienrs", async function () {
+    it("should enforce block interval for miners", async function () {
       const { evmValidator, addr1, owner } = await loadFixture(deployFixture);
+
+      // Fund contract
+      await owner.sendTransaction({
+        to: evmValidator.getAddress(),
+        value: ethers.parseEther("10"),
+      });
 
       const weight_block_interval = 250;
       await evmValidator
@@ -366,6 +431,12 @@ describe("EvmValidator", function () {
         deployFixture
       );
 
+      // Fund contract
+      await owner.sendTransaction({
+        to: evmValidator.getAddress(),
+        value: ethers.parseEther("10"),
+      });
+
       await neuron.setShouldRevertSetWeights(true);
       await expect(
         evmValidator
@@ -415,6 +486,60 @@ describe("EvmValidator", function () {
           await ethers.provider.getBalance(evmValidator.getAddress())
         ).to.equal(0);
       });
+    });
+  });
+
+  describe("Upgradability", function () {
+    it("should upgrade EvmValidator and preserve state & balance", async function () {
+      const { evmValidator, owner } = await loadFixture(deployFixture);
+
+      // Set a value in the original contract
+      await evmValidator
+        .connect(owner)
+        .setSetWeightsBounty(ethers.parseEther("1"));
+      expect(await evmValidator.setWeightsBounty()).to.equal(
+        ethers.parseEther("1")
+      );
+
+      await owner.sendTransaction({
+        to: evmValidator.getAddress(),
+        value: ethers.parseEther("10"),
+      });
+
+      const balanceBefore = await ethers.provider.getBalance(
+        evmValidator.getAddress()
+      );
+
+      // Deploy a new version of the contract
+      const MockUpgradedEvmValidator = await ethers.getContractFactory(
+        "MockUpgradedEvmValidator"
+      );
+      // Upgrade the proxy to the new implementation
+      const upgraded = await upgrades.upgradeProxy(
+        await evmValidator.getAddress(),
+        MockUpgradedEvmValidator
+      );
+
+      // Check that the state is preserved
+      expect(await upgraded.setWeightsBounty()).to.equal(
+        ethers.parseEther("1")
+      );
+
+      await mine(1);
+
+      expect(
+        await ethers.provider.getBalance(evmValidator.getAddress()),
+        "balance should be the same"
+      ).to.equal(balanceBefore);
+
+      // Check new functionality (assume V2 adds a function called newFunction)
+      expect(await upgraded.newFunction()).to.equal("V2 works!");
+
+      // chceck the funds can be rescued from the new contract, post upgrade
+      expect(await upgraded.rescueFunds()).to.changeEtherBalances(
+        [owner, upgraded],
+        [ethers.parseEther("10"), ethers.parseEther("10")]
+      );
     });
   });
 });

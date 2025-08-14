@@ -1,5 +1,4 @@
-import { ethers } from "hardhat";
-import hre from "hardhat";
+import { ethers, upgrades } from "hardhat";
 import { storeContract, contractExists, getDeployedContract } from "./store";
 import {
   WTAO__factory,
@@ -66,7 +65,7 @@ async function main() {
       weights.target
     );
 
-    await evmValidator.setSetWeightsBounty(ethers.parseEther("0.01"));
+    // await evmValidator.setSetWeightsBounty(ethers.parseEther("0.01"));
     await evmValidator.setSetWeightsBlockInterval(339);
     await evmValidator.setMetagraphBoostValue(256);
 
@@ -175,12 +174,16 @@ async function deployEvmValidator(netuid: BigNumberish, _weights: AddressLike) {
     return contract;
   }
 
-  console.log("Deploying EVMValidator contract...");
+  console.log("Deploying upgradeable EVMValidator contract...");
   const factory = await ethers.getContractFactory(Contracts.EVM_VALIDATOR);
-  const evmValidator = await factory.deploy(netuid, _weights);
+
+  // Use upgrades.deployProxy for upgradable contract
+  const evmValidator = await upgrades.deployProxy(factory, [netuid, _weights], {
+    initializer: "initialize",
+  });
 
   await evmValidator.waitForDeployment();
-  console.log(`EVMValidator deployed to ${evmValidator.target}`);
+  console.log(`EVMValidator (proxy) deployed to ${evmValidator.target}`);
 
   await storeContract<typeof evmValidator>(
     Contracts.EVM_VALIDATOR,

@@ -67,6 +67,9 @@
     "typescript": "^5.3.3"
   },
   "dependencies": {
+    "@openzeppelin/contracts-upgradeable": "^5.3.0",
+    "@openzeppelin/hardhat-upgrades": "^3.9.1",
+    "@polkadot/util": "13.5.1",
     "@types/inquirer": "^9.0.8",
     "circom": "^0.0.35",
     "circomlib": "git+https://github.com/tornadocash/circomlib.git#c372f14d324d57339c88451834bf2824e73bbdbc",
