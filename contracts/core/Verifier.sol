@@ -30,6 +30,8 @@
 
 pragma solidity ^0.8.0;
 
+import "./VerifierConfig.sol";
+
 library Pairing {
     uint256 constant PRIME_Q =
         21888242871839275222246405745257275088696311157297823662689037894645226208583;
@@ -71,9 +73,19 @@ library Pairing {
         input[3] = p2.Y;
         bool success;
 
+        uint256 precompileAddr = VerifierConfig.BN128_ADD_PRECOMPILE_ADDRESS;
+
         // solium-disable-next-line security/no-inline-assembly
         assembly {
-            success := staticcall(sub(gas(), 2000), 9, input, 0xc0, r, 0x60)
+            // Use compile-time determined precompile address - zero runtime overhead!
+            success := staticcall(
+                sub(gas(), 2000),
+                precompileAddr,
+                input,
+                0xc0,
+                r,
+                0x60
+            )
             // Use revert for substrate compat
             switch success
             case 0 {

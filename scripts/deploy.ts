@@ -1,4 +1,5 @@
 import { ethers } from "hardhat";
+import hre from "hardhat";
 import { storeContract, contractExists, getDeployedContract } from "./store";
 import {
   WTAO__factory,
@@ -14,6 +15,11 @@ import { Contracts } from "./contracts";
 import { IMetagraph_ADDRESS } from "../const";
 import { config } from "../config";
 import { deployHasher as _deployHasher } from "../tools/hasher";
+import {
+  getVerifierVariant,
+  getVerifierContractName,
+} from "../tools/compile-variants";
+import { configureVerifierForNetwork } from "../tools/configure-verifier";
 
 let deployer: HardhatEthersSigner;
 const pool_token_amount = ethers.parseEther("1");
@@ -26,6 +32,15 @@ async function main() {
     const network = await ethers.provider.getNetwork();
     console.log(
       `Deploying to network: ${network.name} (chain ID: ${network.chainId})`
+    );
+
+    // Configure verifier for this network at compile-time
+    configureVerifierForNetwork(hre);
+
+    // Determine verifier variant for this network
+    const verifierVariant = getVerifierVariant(hre);
+    console.log(
+      `Configured Verifier contract for ${verifierVariant.description}`
     );
 
     // Check account balance

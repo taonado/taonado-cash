@@ -2,6 +2,7 @@ import "@nomicfoundation/hardhat-toolbox";
 import "@nomicfoundation/hardhat-verify";
 import { HardhatUserConfig } from "hardhat/config";
 import { config } from "./config";
+import "./tasks/configure-verifier";
 
 const hardhatConfig: HardhatUserConfig = {
   solidity: "0.8.24",
