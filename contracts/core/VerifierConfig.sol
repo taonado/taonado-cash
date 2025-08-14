@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 // Auto-generated configuration for TAO Substrate-compatible EVM chains (testnet, mainnet)
 // Target chains: 945, 964
-// Generated at: 2025-08-08T16:09:25.137Z
+// Generated at: 2025-08-14T22:16:55.943Z
 library VerifierConfig {
     // Compile-time constant - optimized for substrate networks
     // Note: This gets inlined by the optimizer, resulting in zero runtime overhead

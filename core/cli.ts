@@ -474,8 +474,6 @@ class TaonadoCLI {
 
   async performPrivacyWithdraw(note: string, recipient: string): Promise<void> {
     const tx = await claimNote(this.wallet, note, recipient);
-    console.log("✅ Privacy withdraw completed successfully!");
-    console.log("🎉 Your funds have been anonymously transferred!");
   }
 }
 
