@@ -13,11 +13,13 @@ contract WeightsV2 is Ownable, IWeights {
     IMetagraph public metagraph;
     IDepositTracker public depositTracker;
     uint256 public depositGoal;
+    uint256 public constant MAX_ASSOCIATIONS_PER_HOTKEY = 100;
 
     // *should* be 0 as this sn is registered after dTAO
     uint16 public burn_uid;
 
     uint16 public netuid;
+
     constructor(
         uint16 _netuid,
         address _depositTracker,
@@ -48,11 +50,15 @@ contract WeightsV2 is Ownable, IWeights {
         for (uint16 uid = 1; uid < uidCount; uid++) {
             dests[uid] = uid;
             bytes32 hotkey = metagraph.getHotkey(netuid, uid);
-            for (
-                uint256 i = 0;
-                i < depositTracker.associationSetLength(hotkey);
-                i++
-            ) {
+            uint256 associationCount = depositTracker.associationSetLength(
+                hotkey
+            );
+            uint256 maxAssociations = associationCount >
+                MAX_ASSOCIATIONS_PER_HOTKEY
+                ? MAX_ASSOCIATIONS_PER_HOTKEY
+                : associationCount;
+
+            for (uint256 i = 0; i < maxAssociations; i++) {
                 address depositer = depositTracker.associations(hotkey, i);
                 uint256 depositerBalance = wtao.balanceOf(depositer);
                 weights[uid] += depositerBalance;

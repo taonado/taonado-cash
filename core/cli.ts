@@ -2,9 +2,17 @@
 // @prettier
 import inquirer from "inquirer";
 import { logo } from "./logo";
-import { ethers } from "hardhat";
+import { ethers } from "ethers";
+import hre from "hardhat";
 import { config } from "../config";
-import { balances, wrapTAO, unwrapTAO, depositTAO, claimNote } from "./ops";
+import {
+  balances,
+  wrapTAO,
+  unwrapTAO,
+  depositTAO,
+  claimNote,
+  createProviderWithTimeout,
+} from "./ops";
 
 const _CLI_VERSION = "0.1.0";
 
