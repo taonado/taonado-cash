@@ -55,7 +55,7 @@ contract ERC20Taonado is Taonado {
         }
 
         if (_refund > 0) {
-            (bool success, ) = _recipient.call{value: _refund}("");
+            (bool success, ) = _recipient.call{value: _refund, gas: 2300}("");
             if (!success) {
                 // let's return _refund back to the relayer
                 _relayer.transfer(_refund);

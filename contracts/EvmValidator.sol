@@ -172,7 +172,6 @@ contract EvmValidator is
         refundOverhead = _refundOverhead;
     }
 
-    // @dev Allows the contract to receive TAO
     receive() external payable {}
 
     modifier setWeightsIntervalPassed() {

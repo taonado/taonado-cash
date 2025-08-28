@@ -8,11 +8,14 @@ pragma solidity ^0.8.24;
 
 interface IDepositTracker {
     function associate(bytes32 hotkey) external returns (bool);
+
     function associationSetLength(bytes32 hotkey) external view returns (uint);
+
     function associationSet(
         bytes32 hotkey,
         address addr
     ) external view returns (bool);
+
     function associations(
         bytes32 hotkey,
         uint index
@@ -23,6 +26,12 @@ contract DepositTracker is IDepositTracker {
     mapping(address => bool) public uniqueDepositors;
     mapping(bytes32 => mapping(address => bool)) public associationSet;
     mapping(bytes32 => address[]) public associations;
+
+    event AddressAssociated(
+        address indexed depositor,
+        bytes32 indexed hotkey,
+        uint256 timestamp
+    );
 
     constructor() {}
 
@@ -35,6 +44,7 @@ contract DepositTracker is IDepositTracker {
         uniqueDepositors[msg.sender] = true;
         associations[hotkey].push(msg.sender);
         associationSet[hotkey][msg.sender] = true;
+        emit AddressAssociated(msg.sender, hotkey, block.timestamp);
         return true;
     }
 

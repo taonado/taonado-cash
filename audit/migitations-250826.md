@@ -28,3 +28,46 @@ An alternative approach would be to limit this on the DepositTracker side, but t
 
 A mitigation has been put in place, limiting the number of associations checked per hotkey for scoring purposes.
 This will not affect any current miners / configurations.
+
+### Medium - Reentrancy vulnerability in ERC20Taonado withdrawal with ETH (TAO) refunds
+
+This issue is resolved by limiting the gas on _recipient.call() such that an attacker can't abuse re-entrancy
+
+### Medium - Front-running vulnerability in deposit association mechanism
+
+This issue would detrimental for any attacker, the attacker would be attributing their own deposits to another owned hotkey. Go for it, Mr. Attacker!
+No change needed.
+
+### Medium - Integer overflow in weight normalization calculation
+
+With only 21,000,000 TAO ever existing, the max here is 1^18 * 2.1 x 10 ^ 7 * uint16.max ~= 1^30 << 2^256 so an overflow is not possible.
+No change needed.
+
+### Medium - Unchecked external call success in EvmValidator gas refund
+
+While this is theoretically possible, it will only delay possible validation loop run by 1 block. Additionally the owner can always supercede this validator loop run and ensure validator.setWeights() is still executed.
+No change implemented.
+
+### Medium - WTAO withdraw function vulnerable to insufficient balance griefing
+
+WTAO is designed in way that this should not happen, owing to the original WETH design decisions.
+
+### Low - Missing validation of zero denomination in Taonado constructor
+
+Yes in theory any size denomination could be used, but it need not be enforced.
+If denomination size is so large (say 1M TAO) then it will not be used. No issues.
+
+### Low - Missing event emission for critical state changes
+
+No harm in adding an event here. Good find, suggested changes have been implemented.
+
+### Low - Precision loss in weight normalization due to premature casting
+
+Higher precision is not needed since the error is at most TOTAL_DEPOSITED_BALANCE / uint16.max.
+The error also does not compound considering the addition of the hotkeys deposits is tracked with full precision.
+No change implemented, and an additional cast operation would increase gas usage.
+
+### Low - Unprotected ETH receive function creates accounting risks
+
+While this has a low chance of occuring, the trade off of convenience (fund from a non-owner address) out-weighs any benefit from the proposed change.
+No change implemented.
