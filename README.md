@@ -165,7 +165,7 @@ Taonado introduces AML (Anti Monitoring Liquidity), a novel mechanism that enhan
 ## 🔒 Security
 Taonado is experimental software. While we use audited zk-SNARK libraries, the codebase has not undergone formal audits. Use at your own risk.
 
-Audits: Pending community funding.
+Audits: Pending community funding. Interim audit has been completed: [audit/](/audit/Hashlock%20-%20Audit%20Report%20(250826).pdf)
 
 Bug Bounty: Report vulnerabilities to taonado@proton.me for rewards.
 
