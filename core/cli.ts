@@ -3,18 +3,13 @@
 import inquirer from "inquirer";
 import { logo } from "./logo";
 import { ethers } from "ethers";
+import { createPoolStatsClient, PoolSize } from "./pool-stats-api";
 import hre from "hardhat";
 import { config } from "../config";
-import {
-  balances,
-  wrapTAO,
-  unwrapTAO,
-  depositTAO,
-  claimNote,
-  createProviderWithTimeout,
-} from "./ops";
+import { balances, wrapTAO, unwrapTAO, depositTAO, claimNote } from "./ops";
 
 const _CLI_VERSION = "0.1.0";
+const poolStatsClient = createPoolStatsClient();
 
 // Types for CLI operations
 interface CliArgs {
@@ -297,20 +292,18 @@ class TaonadoCLI {
     );
     console.log("    Without this note, you cannot withdraw your funds!\n");
 
-    let amount = this.args.amount;
+    let amount: PoolSize | undefined = this.args.amount as PoolSize;
 
     if (!amount) {
+      const poolSizes: PoolSize[] = ["0.1", "1", "10", "100", "1000"];
       const amountAnswer = await inquirer.prompt({
         type: "list",
         name: "amount",
         message: "Select deposit amount (standard pool sizes):",
-        choices: [
-          { name: "0.1 TAO (coming soon)", value: "0.1", disabled: true },
-          { name: "1 TAO", value: "1" },
-          { name: "10 TAO (coming soon)", value: "10", disabled: true },
-          { name: "100 TAO (coming soon)", value: "100", disabled: true },
-          { name: "1000 TAO (coming soon)", value: "1000", disabled: true },
-        ],
+        choices: poolSizes.map((size) => ({
+          name: `${size} TAO`,
+          value: size,
+        })),
       });
       amount = amountAnswer.amount;
     }
@@ -323,24 +316,35 @@ class TaonadoCLI {
     });
 
     if (confirm) {
-      console.log("\n⏳ Processing privacy deposit...");
-      console.log("   • Generating secret note...");
-      console.log("   • Creating commitment...");
-      console.log("   • Submitting to pool...\n");
-
       try {
-        const note = await this.performPrivacyDeposit(amount);
-        console.log("✅ Privacy deposit completed successfully!\n");
-        console.log("🔑 YOUR SECRET NOTE (SAVE THIS SECURELY):");
-        console.log("==========================================");
-        console.log(note);
-        console.log("==========================================\n");
-        console.log(
-          "⚠️  IMPORTANT: Without this note, you cannot withdraw your funds!"
+        const poolSizeInterest = await poolStatsClient.getPoolSizeInterest(
+          amount!
         );
-        console.log(
-          "   Store it in a safe place (password manager, encrypted file, etc.)"
-        );
+        if (poolSizeInterest.address) {
+          console.log("\n⏳ Processing privacy deposit...");
+          console.log("   • Generating secret note...");
+          console.log("   • Creating commitment...");
+          console.log("   • Submitting to pool...\n");
+          const note = await this.performPrivacyDeposit(
+            amount!,
+            poolSizeInterest.address
+          );
+          console.log("✅ Privacy deposit completed successfully!\n");
+          console.log("🔑 YOUR SECRET NOTE (SAVE THIS SECURELY):");
+          console.log("==========================================");
+          console.log(note);
+          console.log("==========================================\n");
+          console.log(
+            "⚠️  IMPORTANT: Without this note, you cannot withdraw your funds!"
+          );
+          console.log(
+            "   Store it in a safe place (password manager, encrypted file, etc.)"
+          );
+        } else {
+          console.error(
+            `❌ Error: Taonado ERC-20 contract not found for ${amount} TAO pool size. Please try again with a different pool size.`
+          );
+        }
       } catch (error) {
         console.error("❌ Error during privacy deposit:", error);
       }
@@ -475,8 +479,11 @@ class TaonadoCLI {
     console.log("\n===============================\n");
   }
 
-  async performPrivacyDeposit(amount: string): Promise<string> {
-    const { note, tx } = await depositTAO(this.wallet, amount);
+  async performPrivacyDeposit(
+    amount: string,
+    address: string
+  ): Promise<string> {
+    const { note, tx } = await depositTAO(this.wallet, amount, address);
     return note;
   }
 

@@ -47,7 +47,11 @@ async function approveWTAO(
   return await contract.approve(guy, amount);
 }
 
-export async function depositTAO(wallet: Wallet, amount: string) {
+export async function depositTAO(
+  wallet: Wallet,
+  amount: string,
+  address: string
+) {
   const amount_wei = ethers.parseEther(amount);
   const wtaoBalance = await getWTAOBalance(wallet);
   if (!wtaoBalance || wtaoBalance < amount_wei) {
@@ -55,6 +59,12 @@ export async function depositTAO(wallet: Wallet, amount: string) {
   }
 
   const taonado = await getERC20TaonadoContract(wallet);
+
+  if (address != (await taonado.getAddress())) {
+    throw new Error(
+      "Address does not match the local Taonado contract address, are you sure you are running the latest version of the CLI?"
+    );
+  }
 
   const approval = await approveWTAO(wallet, taonado.getAddress(), amount_wei);
   const receipt = await approval.wait();
