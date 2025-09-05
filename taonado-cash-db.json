@@ -4503,7 +4503,7 @@
       "fallback": null
     },
     "mainnet": {
-      "target": "0xb1A77a9cb84812F7855f601B9418985caA52B45e",
+      "target": "0x64ee4B13C4E38FFe1D68fDEAABB5c96c51630254",
       "interface": {
         "fragments": [
           {
