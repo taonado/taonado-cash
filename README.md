@@ -68,20 +68,23 @@ Carefully read the instructions and script in [scripts/vali.ts](scripts/vali.ts)
 
 Unlike traditional subnets that require dedicated validators, Taonado uses a decentralized validation approach where any EVM wallet can contribute to weight setting and earn TAO bounties. This eliminates the need for traditional validator infrastructure while maintaining network security through incentivized participation.
 
-Phase 0 is live!
+Phase 1 is live!
 
-### Usage (coming soon!)
+### Usage
 1. Deposit TAO:
 ```bash
-taonado deposit --amount 1 --secret <your_secret_phrase> --wallet_name <coldkey_address>
+pnpm cli
 ```
+Follow the interactive prompts to wrap TAO and make a deposit!
 
 ### 🚨 Important: You must keep this secret phrase secure. There is no way to withdraw funds without it.
 
 2. Withdraw TAO:
 ```bash
-taonado withdraw --amount 1 --secret <your_secret_phrase> --recipient <new_address>
+pnpm cli
 ```
+
+Follow the interactive prompts to claim your note from earlier and receive your deposit back.
 
 ## 💡 Incentives
 
