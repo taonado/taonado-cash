@@ -2,7 +2,7 @@
 // @prettier
 import inquirer from "inquirer";
 import { logo } from "./logo";
-import { ethers } from "ethers";
+import { ethers } from "hardhat";
 import { createPoolStatsClient, PoolSize } from "./pool-stats-api";
 import hre from "hardhat";
 import { config } from "../config";
