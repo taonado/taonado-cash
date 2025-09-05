@@ -57,8 +57,8 @@ async function main() {
       wtao.target
     );
 
-    // set initial deposit goal to 1000 TAO
-    await weights.setDepositGoal(ethers.parseEther("1000"));
+    // set initial deposit goal to 5000 TAO
+    await weights.setDepositGoal(ethers.parseEther("5000"));
 
     const evmValidator = await deployEvmValidator(
       config.netuid,
@@ -66,8 +66,8 @@ async function main() {
     );
 
     // await evmValidator.setSetWeightsBounty(ethers.parseEther("0.01"));
-    await evmValidator.setSetWeightsBlockInterval(339);
-    await evmValidator.setMetagraphBoostValue(256);
+    // await evmValidator.setSetWeightsBlockInterval(339);
+    // await evmValidator.setMetagraphBoostValue(256);
 
     const hasher = await deployHasher();
     const verifier = await deployVerifier();

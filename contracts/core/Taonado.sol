@@ -30,11 +30,16 @@ abstract contract Taonado is MerkleTreeWithHistory, ReentrancyGuard {
     // we store all commitments just to prevent accidental deposits with the same commitment
     mapping(bytes32 => bool) public commitments;
 
+    // deposit lifetime for each address, for scoring
+    mapping(address => uint256) public totalLifetimeDeposits;
+
     event Deposit(
         bytes32 indexed commitment,
         uint32 leafIndex,
-        uint256 timestamp
+        uint256 timestamp,
+        address indexed user
     );
+
     event Withdrawal(
         address to,
         bytes32 nullifierHash,
@@ -71,7 +76,9 @@ abstract contract Taonado is MerkleTreeWithHistory, ReentrancyGuard {
         commitments[_commitment] = true;
         _processDeposit();
 
-        emit Deposit(_commitment, insertedIndex, block.timestamp);
+        totalLifetimeDeposits[msg.sender] += denomination;
+
+        emit Deposit(_commitment, insertedIndex, block.timestamp, msg.sender);
     }
 
     /** @dev this function is defined in a child contract */
