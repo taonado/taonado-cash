@@ -3501,6 +3501,68 @@
       "runner": "<SignerWithAddress 0xa11c69461aCA3c111abbC5B3f0E62E1a4144cc8c>",
       "filters": {},
       "fallback": null
+    },
+    "mainnet": {
+      "target": "0x18dEa7De8D0daC922d69F4532072b219DE7157d4",
+      "interface": {
+        "fragments": [
+          {
+            "type": "function",
+            "inputs": [
+              {
+                "name": "xL_in",
+                "type": "uint256",
+                "baseType": "uint256",
+                "components": null,
+                "arrayLength": null,
+                "arrayChildren": null
+              },
+              {
+                "name": "xR_in",
+                "type": "uint256",
+                "baseType": "uint256",
+                "components": null,
+                "arrayLength": null,
+                "arrayChildren": null
+              }
+            ],
+            "name": "MiMCSponge",
+            "constant": true,
+            "outputs": [
+              {
+                "name": "xL",
+                "type": "uint256",
+                "baseType": "uint256",
+                "components": null,
+                "arrayLength": null,
+                "arrayChildren": null
+              },
+              {
+                "name": "xR",
+                "type": "uint256",
+                "baseType": "uint256",
+                "components": null,
+                "arrayLength": null,
+                "arrayChildren": null
+              }
+            ],
+            "stateMutability": "pure",
+            "payable": false,
+            "gas": null
+          }
+        ],
+        "deploy": {
+          "type": "constructor",
+          "inputs": [],
+          "payable": false,
+          "gas": null
+        },
+        "fallback": null,
+        "receive": false
+      },
+      "runner": "<SignerWithAddress 0x2e8F7f1E15336a71bB97aE318aca73C3FadA5309>",
+      "filters": {},
+      "fallback": null
     }
   },
   "Verifier": {
@@ -3562,6 +3624,67 @@
         "receive": false
       },
       "runner": "<SignerWithAddress 0xa11c69461aCA3c111abbC5B3f0E62E1a4144cc8c>",
+      "filters": {},
+      "fallback": null
+    },
+    "mainnet": {
+      "target": "0xD080C8F957fBE633F65B69EF29A333e4b206f845",
+      "interface": {
+        "fragments": [
+          {
+            "type": "function",
+            "inputs": [
+              {
+                "name": "proof",
+                "type": "bytes",
+                "baseType": "bytes",
+                "components": null,
+                "arrayLength": null,
+                "arrayChildren": null
+              },
+              {
+                "name": "input",
+                "type": "uint256[6]",
+                "baseType": "array",
+                "components": null,
+                "arrayLength": 6,
+                "arrayChildren": {
+                  "name": "",
+                  "type": "uint256",
+                  "baseType": "uint256",
+                  "components": null,
+                  "arrayLength": null,
+                  "arrayChildren": null
+                }
+              }
+            ],
+            "name": "verifyProof",
+            "constant": true,
+            "outputs": [
+              {
+                "name": "",
+                "type": "bool",
+                "baseType": "bool",
+                "components": null,
+                "arrayLength": null,
+                "arrayChildren": null
+              }
+            ],
+            "stateMutability": "view",
+            "payable": false,
+            "gas": null
+          }
+        ],
+        "deploy": {
+          "type": "constructor",
+          "inputs": [],
+          "payable": false,
+          "gas": null
+        },
+        "fallback": null,
+        "receive": false
+      },
+      "runner": "<SignerWithAddress 0x2e8F7f1E15336a71bB97aE318aca73C3FadA5309>",
       "filters": {},
       "fallback": null
     }
@@ -4376,6 +4499,855 @@
         "receive": false
       },
       "runner": "<SignerWithAddress 0xa11c69461aCA3c111abbC5B3f0E62E1a4144cc8c>",
+      "filters": {},
+      "fallback": null
+    },
+    "mainnet": {
+      "target": "0xb1A77a9cb84812F7855f601B9418985caA52B45e",
+      "interface": {
+        "fragments": [
+          {
+            "type": "constructor",
+            "inputs": [
+              {
+                "name": "_verifier",
+                "type": "address",
+                "baseType": "address",
+                "components": null,
+                "arrayLength": null,
+                "arrayChildren": null
+              },
+              {
+                "name": "_hasher",
+                "type": "address",
+                "baseType": "address",
+                "components": null,
+                "arrayLength": null,
+                "arrayChildren": null
+              },
+              {
+                "name": "_denomination",
+                "type": "uint256",
+                "baseType": "uint256",
+                "components": null,
+                "arrayLength": null,
+                "arrayChildren": null
+              },
+              {
+                "name": "_merkleTreeHeight",
+                "type": "uint32",
+                "baseType": "uint32",
+                "components": null,
+                "arrayLength": null,
+                "arrayChildren": null
+              },
+              {
+                "name": "_token",
+                "type": "address",
+                "baseType": "address",
+                "components": null,
+                "arrayLength": null,
+                "arrayChildren": null
+              }
+            ],
+            "payable": false,
+            "gas": null
+          },
+          {
+            "type": "error",
+            "inputs": [
+              {
+                "name": "target",
+                "type": "address",
+                "baseType": "address",
+                "components": null,
+                "arrayLength": null,
+                "arrayChildren": null
+              }
+            ],
+            "name": "AddressEmptyCode"
+          },
+          {
+            "type": "error",
+            "inputs": [
+              {
+                "name": "account",
+                "type": "address",
+                "baseType": "address",
+                "components": null,
+                "arrayLength": null,
+                "arrayChildren": null
+              }
+            ],
+            "name": "AddressInsufficientBalance"
+          },
+          {
+            "type": "error",
+            "inputs": [],
+            "name": "FailedInnerCall"
+          },
+          {
+            "type": "error",
+            "inputs": [],
+            "name": "ReentrancyGuardReentrantCall"
+          },
+          {
+            "type": "error",
+            "inputs": [
+              {
+                "name": "token",
+                "type": "address",
+                "baseType": "address",
+                "components": null,
+                "arrayLength": null,
+                "arrayChildren": null
+              }
+            ],
+            "name": "SafeERC20FailedOperation"
+          },
+          {
+            "type": "event",
+            "inputs": [
+              {
+                "name": "commitment",
+                "type": "bytes32",
+                "baseType": "bytes32",
+                "indexed": true,
+                "components": null,
+                "arrayLength": null,
+                "arrayChildren": null
+              },
+              {
+                "name": "leafIndex",
+                "type": "uint32",
+                "baseType": "uint32",
+                "indexed": false,
+                "components": null,
+                "arrayLength": null,
+                "arrayChildren": null
+              },
+              {
+                "name": "timestamp",
+                "type": "uint256",
+                "baseType": "uint256",
+                "indexed": false,
+                "components": null,
+                "arrayLength": null,
+                "arrayChildren": null
+              },
+              {
+                "name": "user",
+                "type": "address",
+                "baseType": "address",
+                "indexed": true,
+                "components": null,
+                "arrayLength": null,
+                "arrayChildren": null
+              }
+            ],
+            "name": "Deposit",
+            "anonymous": false
+          },
+          {
+            "type": "event",
+            "inputs": [
+              {
+                "name": "to",
+                "type": "address",
+                "baseType": "address",
+                "indexed": false,
+                "components": null,
+                "arrayLength": null,
+                "arrayChildren": null
+              },
+              {
+                "name": "nullifierHash",
+                "type": "bytes32",
+                "baseType": "bytes32",
+                "indexed": false,
+                "components": null,
+                "arrayLength": null,
+                "arrayChildren": null
+              },
+              {
+                "name": "relayer",
+                "type": "address",
+                "baseType": "address",
+                "indexed": true,
+                "components": null,
+                "arrayLength": null,
+                "arrayChildren": null
+              },
+              {
+                "name": "fee",
+                "type": "uint256",
+                "baseType": "uint256",
+                "indexed": false,
+                "components": null,
+                "arrayLength": null,
+                "arrayChildren": null
+              }
+            ],
+            "name": "Withdrawal",
+            "anonymous": false
+          },
+          {
+            "type": "function",
+            "inputs": [],
+            "name": "FIELD_SIZE",
+            "constant": true,
+            "outputs": [
+              {
+                "name": "",
+                "type": "uint256",
+                "baseType": "uint256",
+                "components": null,
+                "arrayLength": null,
+                "arrayChildren": null
+              }
+            ],
+            "stateMutability": "view",
+            "payable": false,
+            "gas": null
+          },
+          {
+            "type": "function",
+            "inputs": [],
+            "name": "ROOT_HISTORY_SIZE",
+            "constant": true,
+            "outputs": [
+              {
+                "name": "",
+                "type": "uint32",
+                "baseType": "uint32",
+                "components": null,
+                "arrayLength": null,
+                "arrayChildren": null
+              }
+            ],
+            "stateMutability": "view",
+            "payable": false,
+            "gas": null
+          },
+          {
+            "type": "function",
+            "inputs": [],
+            "name": "ZERO_VALUE",
+            "constant": true,
+            "outputs": [
+              {
+                "name": "",
+                "type": "uint256",
+                "baseType": "uint256",
+                "components": null,
+                "arrayLength": null,
+                "arrayChildren": null
+              }
+            ],
+            "stateMutability": "view",
+            "payable": false,
+            "gas": null
+          },
+          {
+            "type": "function",
+            "inputs": [
+              {
+                "name": "",
+                "type": "bytes32",
+                "baseType": "bytes32",
+                "components": null,
+                "arrayLength": null,
+                "arrayChildren": null
+              }
+            ],
+            "name": "commitments",
+            "constant": true,
+            "outputs": [
+              {
+                "name": "",
+                "type": "bool",
+                "baseType": "bool",
+                "components": null,
+                "arrayLength": null,
+                "arrayChildren": null
+              }
+            ],
+            "stateMutability": "view",
+            "payable": false,
+            "gas": null
+          },
+          {
+            "type": "function",
+            "inputs": [],
+            "name": "currentRootIndex",
+            "constant": true,
+            "outputs": [
+              {
+                "name": "",
+                "type": "uint32",
+                "baseType": "uint32",
+                "components": null,
+                "arrayLength": null,
+                "arrayChildren": null
+              }
+            ],
+            "stateMutability": "view",
+            "payable": false,
+            "gas": null
+          },
+          {
+            "type": "function",
+            "inputs": [],
+            "name": "denomination",
+            "constant": true,
+            "outputs": [
+              {
+                "name": "",
+                "type": "uint256",
+                "baseType": "uint256",
+                "components": null,
+                "arrayLength": null,
+                "arrayChildren": null
+              }
+            ],
+            "stateMutability": "view",
+            "payable": false,
+            "gas": null
+          },
+          {
+            "type": "function",
+            "inputs": [
+              {
+                "name": "_commitment",
+                "type": "bytes32",
+                "baseType": "bytes32",
+                "components": null,
+                "arrayLength": null,
+                "arrayChildren": null
+              }
+            ],
+            "name": "deposit",
+            "constant": false,
+            "outputs": [],
+            "stateMutability": "payable",
+            "payable": true,
+            "gas": null
+          },
+          {
+            "type": "function",
+            "inputs": [
+              {
+                "name": "",
+                "type": "uint256",
+                "baseType": "uint256",
+                "components": null,
+                "arrayLength": null,
+                "arrayChildren": null
+              }
+            ],
+            "name": "filledSubtrees",
+            "constant": true,
+            "outputs": [
+              {
+                "name": "",
+                "type": "bytes32",
+                "baseType": "bytes32",
+                "components": null,
+                "arrayLength": null,
+                "arrayChildren": null
+              }
+            ],
+            "stateMutability": "view",
+            "payable": false,
+            "gas": null
+          },
+          {
+            "type": "function",
+            "inputs": [],
+            "name": "getLastRoot",
+            "constant": true,
+            "outputs": [
+              {
+                "name": "",
+                "type": "bytes32",
+                "baseType": "bytes32",
+                "components": null,
+                "arrayLength": null,
+                "arrayChildren": null
+              }
+            ],
+            "stateMutability": "view",
+            "payable": false,
+            "gas": null
+          },
+          {
+            "type": "function",
+            "inputs": [
+              {
+                "name": "_hasher",
+                "type": "address",
+                "baseType": "address",
+                "components": null,
+                "arrayLength": null,
+                "arrayChildren": null
+              },
+              {
+                "name": "_left",
+                "type": "bytes32",
+                "baseType": "bytes32",
+                "components": null,
+                "arrayLength": null,
+                "arrayChildren": null
+              },
+              {
+                "name": "_right",
+                "type": "bytes32",
+                "baseType": "bytes32",
+                "components": null,
+                "arrayLength": null,
+                "arrayChildren": null
+              }
+            ],
+            "name": "hashLeftRight",
+            "constant": true,
+            "outputs": [
+              {
+                "name": "",
+                "type": "bytes32",
+                "baseType": "bytes32",
+                "components": null,
+                "arrayLength": null,
+                "arrayChildren": null
+              }
+            ],
+            "stateMutability": "pure",
+            "payable": false,
+            "gas": null
+          },
+          {
+            "type": "function",
+            "inputs": [],
+            "name": "hasher",
+            "constant": true,
+            "outputs": [
+              {
+                "name": "",
+                "type": "address",
+                "baseType": "address",
+                "components": null,
+                "arrayLength": null,
+                "arrayChildren": null
+              }
+            ],
+            "stateMutability": "view",
+            "payable": false,
+            "gas": null
+          },
+          {
+            "type": "function",
+            "inputs": [
+              {
+                "name": "_root",
+                "type": "bytes32",
+                "baseType": "bytes32",
+                "components": null,
+                "arrayLength": null,
+                "arrayChildren": null
+              }
+            ],
+            "name": "isKnownRoot",
+            "constant": true,
+            "outputs": [
+              {
+                "name": "",
+                "type": "bool",
+                "baseType": "bool",
+                "components": null,
+                "arrayLength": null,
+                "arrayChildren": null
+              }
+            ],
+            "stateMutability": "view",
+            "payable": false,
+            "gas": null
+          },
+          {
+            "type": "function",
+            "inputs": [
+              {
+                "name": "_nullifierHash",
+                "type": "bytes32",
+                "baseType": "bytes32",
+                "components": null,
+                "arrayLength": null,
+                "arrayChildren": null
+              }
+            ],
+            "name": "isSpent",
+            "constant": true,
+            "outputs": [
+              {
+                "name": "",
+                "type": "bool",
+                "baseType": "bool",
+                "components": null,
+                "arrayLength": null,
+                "arrayChildren": null
+              }
+            ],
+            "stateMutability": "view",
+            "payable": false,
+            "gas": null
+          },
+          {
+            "type": "function",
+            "inputs": [
+              {
+                "name": "_nullifierHashes",
+                "type": "bytes32[]",
+                "baseType": "array",
+                "components": null,
+                "arrayLength": -1,
+                "arrayChildren": {
+                  "name": "",
+                  "type": "bytes32",
+                  "baseType": "bytes32",
+                  "components": null,
+                  "arrayLength": null,
+                  "arrayChildren": null
+                }
+              }
+            ],
+            "name": "isSpentArray",
+            "constant": true,
+            "outputs": [
+              {
+                "name": "spent",
+                "type": "bool[]",
+                "baseType": "array",
+                "components": null,
+                "arrayLength": -1,
+                "arrayChildren": {
+                  "name": "",
+                  "type": "bool",
+                  "baseType": "bool",
+                  "components": null,
+                  "arrayLength": null,
+                  "arrayChildren": null
+                }
+              }
+            ],
+            "stateMutability": "view",
+            "payable": false,
+            "gas": null
+          },
+          {
+            "type": "function",
+            "inputs": [],
+            "name": "levels",
+            "constant": true,
+            "outputs": [
+              {
+                "name": "",
+                "type": "uint32",
+                "baseType": "uint32",
+                "components": null,
+                "arrayLength": null,
+                "arrayChildren": null
+              }
+            ],
+            "stateMutability": "view",
+            "payable": false,
+            "gas": null
+          },
+          {
+            "type": "function",
+            "inputs": [],
+            "name": "nextIndex",
+            "constant": true,
+            "outputs": [
+              {
+                "name": "",
+                "type": "uint32",
+                "baseType": "uint32",
+                "components": null,
+                "arrayLength": null,
+                "arrayChildren": null
+              }
+            ],
+            "stateMutability": "view",
+            "payable": false,
+            "gas": null
+          },
+          {
+            "type": "function",
+            "inputs": [
+              {
+                "name": "",
+                "type": "bytes32",
+                "baseType": "bytes32",
+                "components": null,
+                "arrayLength": null,
+                "arrayChildren": null
+              }
+            ],
+            "name": "nullifierHashes",
+            "constant": true,
+            "outputs": [
+              {
+                "name": "",
+                "type": "bool",
+                "baseType": "bool",
+                "components": null,
+                "arrayLength": null,
+                "arrayChildren": null
+              }
+            ],
+            "stateMutability": "view",
+            "payable": false,
+            "gas": null
+          },
+          {
+            "type": "function",
+            "inputs": [
+              {
+                "name": "",
+                "type": "uint256",
+                "baseType": "uint256",
+                "components": null,
+                "arrayLength": null,
+                "arrayChildren": null
+              }
+            ],
+            "name": "roots",
+            "constant": true,
+            "outputs": [
+              {
+                "name": "",
+                "type": "bytes32",
+                "baseType": "bytes32",
+                "components": null,
+                "arrayLength": null,
+                "arrayChildren": null
+              }
+            ],
+            "stateMutability": "view",
+            "payable": false,
+            "gas": null
+          },
+          {
+            "type": "function",
+            "inputs": [],
+            "name": "token",
+            "constant": true,
+            "outputs": [
+              {
+                "name": "",
+                "type": "address",
+                "baseType": "address",
+                "components": null,
+                "arrayLength": null,
+                "arrayChildren": null
+              }
+            ],
+            "stateMutability": "view",
+            "payable": false,
+            "gas": null
+          },
+          {
+            "type": "function",
+            "inputs": [
+              {
+                "name": "",
+                "type": "address",
+                "baseType": "address",
+                "components": null,
+                "arrayLength": null,
+                "arrayChildren": null
+              }
+            ],
+            "name": "totalLifetimeDeposits",
+            "constant": true,
+            "outputs": [
+              {
+                "name": "",
+                "type": "uint256",
+                "baseType": "uint256",
+                "components": null,
+                "arrayLength": null,
+                "arrayChildren": null
+              }
+            ],
+            "stateMutability": "view",
+            "payable": false,
+            "gas": null
+          },
+          {
+            "type": "function",
+            "inputs": [],
+            "name": "verifier",
+            "constant": true,
+            "outputs": [
+              {
+                "name": "",
+                "type": "address",
+                "baseType": "address",
+                "components": null,
+                "arrayLength": null,
+                "arrayChildren": null
+              }
+            ],
+            "stateMutability": "view",
+            "payable": false,
+            "gas": null
+          },
+          {
+            "type": "function",
+            "inputs": [
+              {
+                "name": "_proof",
+                "type": "bytes",
+                "baseType": "bytes",
+                "components": null,
+                "arrayLength": null,
+                "arrayChildren": null
+              },
+              {
+                "name": "_root",
+                "type": "bytes32",
+                "baseType": "bytes32",
+                "components": null,
+                "arrayLength": null,
+                "arrayChildren": null
+              },
+              {
+                "name": "_nullifierHash",
+                "type": "bytes32",
+                "baseType": "bytes32",
+                "components": null,
+                "arrayLength": null,
+                "arrayChildren": null
+              },
+              {
+                "name": "_recipient",
+                "type": "address",
+                "baseType": "address",
+                "components": null,
+                "arrayLength": null,
+                "arrayChildren": null
+              },
+              {
+                "name": "_relayer",
+                "type": "address",
+                "baseType": "address",
+                "components": null,
+                "arrayLength": null,
+                "arrayChildren": null
+              },
+              {
+                "name": "_fee",
+                "type": "uint256",
+                "baseType": "uint256",
+                "components": null,
+                "arrayLength": null,
+                "arrayChildren": null
+              },
+              {
+                "name": "_refund",
+                "type": "uint256",
+                "baseType": "uint256",
+                "components": null,
+                "arrayLength": null,
+                "arrayChildren": null
+              }
+            ],
+            "name": "withdraw",
+            "constant": false,
+            "outputs": [],
+            "stateMutability": "payable",
+            "payable": true,
+            "gas": null
+          },
+          {
+            "type": "function",
+            "inputs": [
+              {
+                "name": "i",
+                "type": "uint256",
+                "baseType": "uint256",
+                "components": null,
+                "arrayLength": null,
+                "arrayChildren": null
+              }
+            ],
+            "name": "zeros",
+            "constant": true,
+            "outputs": [
+              {
+                "name": "",
+                "type": "bytes32",
+                "baseType": "bytes32",
+                "components": null,
+                "arrayLength": null,
+                "arrayChildren": null
+              }
+            ],
+            "stateMutability": "pure",
+            "payable": false,
+            "gas": null
+          }
+        ],
+        "deploy": {
+          "type": "constructor",
+          "inputs": [
+            {
+              "name": "_verifier",
+              "type": "address",
+              "baseType": "address",
+              "components": null,
+              "arrayLength": null,
+              "arrayChildren": null
+            },
+            {
+              "name": "_hasher",
+              "type": "address",
+              "baseType": "address",
+              "components": null,
+              "arrayLength": null,
+              "arrayChildren": null
+            },
+            {
+              "name": "_denomination",
+              "type": "uint256",
+              "baseType": "uint256",
+              "components": null,
+              "arrayLength": null,
+              "arrayChildren": null
+            },
+            {
+              "name": "_merkleTreeHeight",
+              "type": "uint32",
+              "baseType": "uint32",
+              "components": null,
+              "arrayLength": null,
+              "arrayChildren": null
+            },
+            {
+              "name": "_token",
+              "type": "address",
+              "baseType": "address",
+              "components": null,
+              "arrayLength": null,
+              "arrayChildren": null
+            }
+          ],
+          "payable": false,
+          "gas": null
+        },
+        "fallback": null,
+        "receive": false
+      },
+      "runner": "<SignerWithAddress 0x2e8F7f1E15336a71bB97aE318aca73C3FadA5309>",
       "filters": {},
       "fallback": null
     }
