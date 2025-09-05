@@ -61,7 +61,7 @@ class TaonadoCLI {
     console.log(logo);
     console.log("\n🌪️  Welcome to Taonado CLI 🌀");
     console.log("=====================================");
-    console.log(`Network: testnet`);
+    console.log(`Network: mainnet`);
     console.log(`EVM Wallet: ${this.wallet.address}`);
     console.log(`Version: ${_CLI_VERSION}`);
     console.log("=====================================\n");
