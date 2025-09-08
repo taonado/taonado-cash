@@ -44,17 +44,21 @@ For a detailed technical overview of the system architecture, including contract
 git clone https://github.com/taonado/taonado-cash
 cd taonado-cash && pnpm i
 cp config-example.ts config.ts #fill in with details
-pnpm build
+pnpm download-keys # get prebuilt keys and built circuit
+pnpm build:substrate
 ```
 
 If you don't already have `pnpm` installed: [pnpm install docs](https://pnpm.io/installation)
 
 It's recommended to manage `nodejs` through pnpm.
 
+If you run into issues installing (errors with permissions on pulling from the *github.com repos), you need to ensure ssh auth is configured as anon git is sometimes blocked by github (depends on IP address)... Guide [here](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)
+
 ### Tests
-Run the tests and report results.
+Run the tests and report results. (must also complete the installation steps above)
 
 ```bash
+pnpm build:ethereum
 pnpm test
 ```
 
