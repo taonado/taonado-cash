@@ -13,7 +13,7 @@ import { upgrades } from "hardhat";
 import type {
   WTAO,
   DepositTracker,
-  WeightsV2,
+  WeightsV3,
   EvmValidator,
   MockMetagraph,
   MockNeuron,
@@ -66,7 +66,7 @@ describe("EvmValidator", function () {
       await depositTracker.getAddress(),
       await metagraph.getAddress(),
       await wtao.getAddress()
-    )) as unknown as WeightsV2;
+    )) as unknown as WeightsV3;
 
     await weights.setDepositGoal(ethers.parseEther("1000"));
 

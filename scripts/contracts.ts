@@ -4,7 +4,7 @@ enum Contracts {
   EVM_VALIDATOR = "EvmValidator",
   WTAO = "WTAO",
   DEPOSIT_TRACKER = "DepositTracker",
-  WEIGHTS = "WeightsV2",
+  WEIGHTS = "WeightsV3",
   ERC20TAONADO = "ERC20Taonado",
   HASHER = "Hasher",
   VERIFIER = "Verifier",

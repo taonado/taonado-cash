@@ -3,7 +3,7 @@ import { storeContract, contractExists, getDeployedContract } from "./store";
 import {
   WTAO__factory,
   DepositTracker__factory,
-  WeightsV2__factory,
+  WeightsV3__factory,
   EvmValidator__factory,
   ERC20Taonado__factory,
   Verifier__factory,
@@ -51,23 +51,6 @@ async function main() {
 
     const wtao = await deployWTAO();
     const depositTracker = await deployDepositTracker();
-    const weights = await deployWeights(
-      config.netuid,
-      depositTracker.target,
-      wtao.target
-    );
-
-    // set initial deposit goal to 5000 TAO
-    await weights.setDepositGoal(ethers.parseEther("5000"));
-
-    const evmValidator = await deployEvmValidator(
-      config.netuid,
-      weights.target
-    );
-
-    // await evmValidator.setSetWeightsBounty(ethers.parseEther("0.01"));
-    // await evmValidator.setSetWeightsBlockInterval(339);
-    // await evmValidator.setMetagraphBoostValue(256);
 
     const hasher = await deployHasher();
     const verifier = await deployVerifier();
@@ -78,6 +61,28 @@ async function main() {
       config.MERKLE_TREE_HEIGHT,
       wtao.getAddress()
     );
+
+    const weights = await deployWeights(
+      config.netuid,
+      depositTracker.target,
+      wtao.target,
+      erc20taonado.target
+    );
+
+    // set initial deposit goal to 5000 TAO
+    await weights.setDepositGoal(ethers.parseEther("5000"));
+
+    const evmValidator = await deployEvmValidator(
+      config.netuid,
+      weights.target
+    );
+
+    // upgrade to new WeightsV3 contract
+    await evmValidator.setWeightsContract(weights.target);
+
+    // await evmValidator.setSetWeightsBounty(ethers.parseEther("0.01"));
+    // await evmValidator.setSetWeightsBlockInterval(339);
+    // await evmValidator.setMetagraphBoostValue(256);
 
     console.log("Contracts deployed and configured successfully! 🌀");
 
@@ -240,14 +245,15 @@ async function deployDepositTracker() {
 async function deployWeights(
   netuid: BigNumberish,
   _depositTracker: AddressLike,
-  _wtao: AddressLike
+  _wtao: AddressLike,
+  _taonado: AddressLike
 ) {
   if (await contractExists(Contracts.WEIGHTS)) {
     console.log("Weights contract already exists");
-    const weights = await getDeployedContract<typeof weightsv2>(
+    const weights = await getDeployedContract<typeof weightsv3>(
       Contracts.WEIGHTS
     );
-    const contract = WeightsV2__factory.connect(
+    const contract = WeightsV3__factory.connect(
       weights.target.toString(),
       deployer
     );
@@ -256,18 +262,19 @@ async function deployWeights(
 
   console.log("Deploying Weights contract...");
   const factory = await ethers.getContractFactory(Contracts.WEIGHTS);
-  const weightsv2 = await factory.deploy(
+  const weightsv3 = await factory.deploy(
     netuid,
     _depositTracker,
     IMetagraph_ADDRESS,
-    _wtao
+    _wtao,
+    _taonado
   );
 
-  await weightsv2.waitForDeployment();
-  console.log(`WeightsV2 deployed to ${weightsv2.target}`);
+  await weightsv3.waitForDeployment();
+  console.log(`WeightsV3 deployed to ${weightsv3.target}`);
 
-  await storeContract<typeof weightsv2>(Contracts.WEIGHTS, weightsv2);
-  return weightsv2;
+  await storeContract<typeof weightsv3>(Contracts.WEIGHTS, weightsv3);
+  return weightsv3;
 }
 
 main().catch((error) => {
