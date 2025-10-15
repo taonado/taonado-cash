@@ -134,6 +134,11 @@ describe("ERC20Taonado", function () {
       const afterBalance = await wtao.balanceOf(wallet.address);
 
       expect(afterBalance).to.equal(beforeBalance + pool_token_amount);
+
+      const lifetimeDeposits = await taonado_erc20.totalLifetimeDeposits(
+        wallet.address
+      );
+      expect(lifetimeDeposits).to.equal(pool_token_amount);
     });
 
     it("should prevent double withdrawals", async function () {

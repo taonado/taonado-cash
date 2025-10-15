@@ -6,15 +6,17 @@ import { config } from "../../config";
 const pool_token_amount = ethers.parseEther("1");
 const { MERKLE_TREE_HEIGHT } = config;
 
-export async function deployERC20Taonado() {
+export async function deployERC20Taonado(wtao?: any) {
   const [deployer] = await ethers.getSigners();
   const hasher = await deployHasher(deployer);
 
   const verifier_factory = await ethers.getContractFactory(Contracts.VERIFIER);
   const verifier = await verifier_factory.deploy();
 
-  const wtao_factory = await ethers.getContractFactory(Contracts.WTAO);
-  const wtao = await wtao_factory.deploy();
+  if (!wtao) {
+    const wtao_factory = await ethers.getContractFactory(Contracts.WTAO);
+    wtao = await wtao_factory.deploy();
+  }
 
   const taonado_factory = await ethers.getContractFactory(
     Contracts.ERC20TAONADO
