@@ -7,11 +7,13 @@ import "./IWeights.sol";
 import "./IWTAO.sol";
 import "./deposit.sol";
 import "./metagraph.sol";
+import "./core/Taonado.sol";
 
-contract WeightsV2 is Ownable, IWeights {
+contract WeightsV3 is Ownable, IWeights {
     IWTAO public wtao;
     IMetagraph public metagraph;
     IDepositTracker public depositTracker;
+    ITaonado public taonado;
     uint256 public depositGoal;
     uint256 public constant MAX_ASSOCIATIONS_PER_HOTKEY = 100;
 
@@ -24,12 +26,14 @@ contract WeightsV2 is Ownable, IWeights {
         uint16 _netuid,
         address _depositTracker,
         address _metagraph,
-        address _wtao
+        address _wtao,
+        address _taonado
     ) Ownable(msg.sender) {
         netuid = _netuid;
         wtao = IWTAO(_wtao);
         metagraph = IMetagraph(_metagraph);
         depositTracker = IDepositTracker(_depositTracker);
+        taonado = ITaonado(_taonado);
     }
 
     /**
@@ -60,7 +64,8 @@ contract WeightsV2 is Ownable, IWeights {
 
             for (uint256 i = 0; i < maxAssociations; i++) {
                 address depositer = depositTracker.associations(hotkey, i);
-                uint256 depositerBalance = wtao.balanceOf(depositer);
+                uint256 depositerBalance = wtao.balanceOf(depositer) +
+                    taonado.totalLifetimeDeposits(depositer);
                 weights[uid] += depositerBalance;
                 totalAllocated += depositerBalance;
             }

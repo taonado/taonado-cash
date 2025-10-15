@@ -22,7 +22,13 @@ interface IVerifier {
     ) external returns (bool);
 }
 
-abstract contract Taonado is MerkleTreeWithHistory, ReentrancyGuard {
+interface ITaonado {
+    function totalLifetimeDeposits(
+        address user
+    ) external view returns (uint256);
+}
+
+abstract contract Taonado is MerkleTreeWithHistory, ReentrancyGuard, ITaonado {
     IVerifier public immutable verifier;
     uint256 public denomination;
 
