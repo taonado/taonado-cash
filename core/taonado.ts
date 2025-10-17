@@ -148,7 +148,6 @@ export async function generateMerkleProof(
     console.log("Fetching deposit events from API (mainnet)...");
     const apiClient = createDepositEventsClient();
     const apiResponse = await apiClient.getAllDepositEvents();
-    console.log("API response:", apiResponse.depositEvents.length);
 
     // Transform API events to match contract event structure
     const sortedEvents = apiResponse.depositEvents.sort((a, b) =>
@@ -156,7 +155,6 @@ export async function generateMerkleProof(
     );
 
     leaves = sortedEvents.map((e) => e.commitment);
-    console.log("Leaves:", leaves);
 
     // Find current commitment in the events
     const depositEvent = sortedEvents.find(
@@ -180,7 +178,6 @@ export async function generateMerkleProof(
           : 0
       ) // Sort events in chronological order
       .map((e) => e.args.commitment);
-    console.log("Leaves:", leaves);
     // Find current commitment in the tree
     const depositEvent = depositEvents.find(
       (e) => e.args.commitment === toHex(deposit.commitment)
