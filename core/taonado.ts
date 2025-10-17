@@ -13,6 +13,7 @@ import { bigInt } from "snarkjs";
 import crypto from "crypto";
 import { AddressLike } from "ethers";
 import circuit from "../build/circuits/withdraw.json";
+import { createDepositEventsClient } from "./deposit-events-api";
 
 const MERKLE_TREE_HEIGHT = 20;
 
@@ -134,28 +135,62 @@ export async function generateMerkleProof(
   contract: ERC20Taonado
 ) {
   console.log("Getting contract state...");
-  const depositEvents = await contract.queryFilter(
-    contract.filters.Deposit(),
-    0,
-    "latest"
-  );
 
-  const leaves = depositEvents
-    .sort((a, b) =>
-      a.args.leafIndex < b.args.leafIndex
-        ? -1
-        : a.args.leafIndex > b.args.leafIndex
-        ? 1
-        : 0
-    ) // Sort events in chronological order
-    .map((e) => e.args.commitment);
+  // Get the current network from the contract's provider
+  const network = await contract.runner?.provider?.getNetwork();
+  const networkName = network?.name || "unknown";
+
+  let leaves: string[];
+  let leafIndex: bigint;
+
+  // Use API for mainnet, contract query for other networks
+  if (networkName === "mainnet") {
+    console.log("Fetching deposit events from API (mainnet)...");
+    const apiClient = createDepositEventsClient();
+    const apiResponse = await apiClient.getAllDepositEvents();
+    console.log("API response:", apiResponse.depositEvents.length);
+
+    // Transform API events to match contract event structure
+    const sortedEvents = apiResponse.depositEvents.sort((a, b) =>
+      a.leafIndex < b.leafIndex ? -1 : a.leafIndex > b.leafIndex ? 1 : 0
+    );
+
+    leaves = sortedEvents.map((e) => e.commitment);
+    console.log("Leaves:", leaves);
+
+    // Find current commitment in the events
+    const depositEvent = sortedEvents.find(
+      (e) => e.commitment === toHex(deposit.commitment)
+    );
+    leafIndex = depositEvent ? BigInt(depositEvent.leafIndex) : BigInt(-1);
+  } else {
+    console.log(`Fetching deposit events from contract (${networkName})...`);
+    const depositEvents = await contract.queryFilter(
+      contract.filters.Deposit(),
+      0,
+      "latest"
+    );
+
+    leaves = depositEvents
+      .sort((a, b) =>
+        a.args.leafIndex < b.args.leafIndex
+          ? -1
+          : a.args.leafIndex > b.args.leafIndex
+          ? 1
+          : 0
+      ) // Sort events in chronological order
+      .map((e) => e.args.commitment);
+    console.log("Leaves:", leaves);
+    // Find current commitment in the tree
+    const depositEvent = depositEvents.find(
+      (e) => e.args.commitment === toHex(deposit.commitment)
+    );
+    leafIndex = depositEvent?.args.leafIndex ?? BigInt(-1);
+  }
+
   const tree = new merkleTree(MERKLE_TREE_HEIGHT, leaves);
 
-  // Find current commitment in the tree
-  const depositEvent = depositEvents.find(
-    (e) => e.args.commitment === toHex(deposit.commitment)
-  );
-  const leafIndex: bigint = depositEvent?.args.leafIndex ?? BigInt(-1);
+  console.log("Tree root:", toHex(tree.root()));
 
   // Validate that our data is correct (optional)
   const isValidRoot = await contract.isKnownRoot(toHex(tree.root()));
